@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rizwan Ali · Data Science Robotics Lab</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <link rel="stylesheet" href="./css/styles.css" />
+</head>
+
+<body>
+
+    <!-- ─── PARTICLES ─── -->
+    <div class="particle-bg" id="particleBg"></div>
+
+    <!-- ─── TOPIC DETAIL MODAL ─── -->
+    <div class="modal-overlay" id="topicModal">
+        <div class="modal-box">
+            <button class="modal-close" id="modalCloseBtn">✕</button>
+            <div class="modal-title" id="modalTitle">Topic Title</div>
+            <div class="modal-meta" id="modalMeta">
+                <span class="diff-badge" id="modalDifficulty">Easy</span>
+                <span id="modalLevel">Foundation</span>
+                <span id="modalStatus">✅ Mastered</span>
+            </div>
+            <div class="modal-section">
+                <h4>📖 Definition</h4>
+                <p id="modalDefinition">Definition goes here.</p>
+            </div>
+            <div class="modal-section">
+                <h4>💻 Example</h4>
+                <div class="code-block" id="modalExample"># code example</div>
+            </div>
+            <div class="modal-section">
+                <h4>🔗 Resources</h4>
+                <ul class="resource-list" id="modalResources">
+                    <li><a href="#" target="_blank">Resource 1</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── SIDEBAR ─── -->
+    <aside class="sidebar">
+        <div class="logo">
+            <span class="neon-dot"></span>
+            <span>Rizwan Ali</span>
+            <span class="badge">v2.0</span>
+        </div>
+        <nav class="nav" id="mainNav">
+            <button class="active" data-view="overview"><span class="icon">📊</span> Overview</button>
+            <button data-view="syllabus"><span class="icon">📚</span> Syllabus <span class="notif"
+                    id="syllabusNotif">0</span></button>
+            <button data-view="lab"><span class="icon">🤖</span> Robotics Lab</button>
+            <button data-view="timer"><span class="icon">⏱️</span> Time Manager</button>
+            <button data-view="knowledge"><span class="icon">🧠</span> Knowledge Map</button>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="row">
+                <div class="avatar">DS</div>
+                <div>
+                    <div class="name">Data Scientist</div>
+                    <div class="title">⚡ <span id="masteredCount">0</span> topics mastered</div>
+                </div>
+                <div class="streak">🔥 <span id="streakDays">7</span>d</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ─── MAIN ─── -->
+    <main class="main" id="mainContent">
+        <div class="top-bar">
+            <h1>⚡ <span class="highlight">Data Science</span> · Robotics Lab</h1>
+            <div class="top-right">
+                <span class="day-badge" id="dayDisplay"></span>
+                <button class="focus-mode-btn" id="focusToggle">🎯 Focus Mode</button>
+            </div>
+        </div>
+        <div id="viewContainer"></div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="./js/script.js"></script>
+
+</body>
+
+</html>
