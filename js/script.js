@@ -238,6 +238,13 @@ let labState = {
     output: '',
 };
 
+// syllabus UI state (search / filter / expand)
+let syllabusState = {
+    query: '',
+    filter: 'all', // all | done | remaining | easy | medium | hard
+    expandedLevels: new Set([0]), // level indices currently expanded
+};
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  HELPERS
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -276,16 +283,23 @@ function getLevelDot(level) {
     return map[level] || 'core';
 }
 
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 function updateMasteredCount() {
     DONE_TOPICS = SYLLABUS_DATA.reduce((acc, l) => acc + l.topics.filter(t => t.done).length, 0);
-    const el = document.getElementById('masteredCount');
-    if (el) el.textContent = DONE_TOPICS;
-    const notif = document.getElementById('syllabusNotif');
-    if (notif) {
-        const remaining = TOTAL_TOPICS - DONE_TOPICS;
+    const remaining = TOTAL_TOPICS - DONE_TOPICS;
+
+    document.querySelectorAll('#masteredCount, #masteredCountMobile').forEach(el => {
+        if (el) el.textContent = DONE_TOPICS;
+    });
+
+    document.querySelectorAll('#syllabusNotif, #syllabusNotifMobile').forEach(notif => {
+        if (!notif) return;
         notif.textContent = remaining > 0 ? remaining : '✓';
         notif.style.background = remaining === 0 ? '#22c55e' : '#3b82f6';
-    }
+    });
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -324,7 +338,7 @@ function openTopicModal(topic, levelName) {
     if (topic.resources && topic.resources.length > 0) {
         topic.resources.forEach(r => {
             const li = document.createElement('li');
-            li.innerHTML = `<a href="${r.url}" target="_blank"><span class="icon">${r.icon || '🔗'}</span> ${r.name}</a>`;
+            li.innerHTML = `<a href="${r.url}" target="_blank" rel="noopener"><span class="icon">${r.icon || '🔗'}</span> ${r.name}</a>`;
             resList.appendChild(li);
         });
     } else {
@@ -332,10 +346,12 @@ function openTopicModal(topic, levelName) {
     }
 
     modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeTopicModal() {
     document.getElementById('topicModal').classList.remove('open');
+    document.body.style.overflow = '';
 }
 
 document.getElementById('modalCloseBtn').addEventListener('click', closeTopicModal);
@@ -345,6 +361,34 @@ document.getElementById('topicModal').addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeTopicModal();
 });
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  MOBILE NAV DRAWER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebarBackdrop').classList.add('open');
+    document.getElementById('hamburgerBtn').classList.add('open');
+    document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('open');
+    document.getElementById('hamburgerBtn').classList.remove('open');
+    document.getElementById('hamburgerBtn').setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+}
+
+document.getElementById('hamburgerBtn').addEventListener('click', () => {
+    const sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('open')) closeSidebar();
+    else openSidebar();
+});
+
+document.getElementById('sidebarBackdrop').addEventListener('click', closeSidebar);
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  RENDER VIEWS
@@ -413,47 +457,88 @@ const views = {
 
     // ─── SYLLABUS ──────────────────────────────────────
     syllabus() {
+        const overallPct = Math.round((DONE_TOPICS / TOTAL_TOPICS) * 100);
         let html = `
               <div class="card full">
                 <h2>📚 Data Science Syllabus <span class="sub">— ${DONE_TOPICS}/${TOTAL_TOPICS} completed</span></h2>
                 <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;">
                   <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#4ade80;">✅ ${DONE_TOPICS} mastered</div>
                   <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#fbbf24;">⏳ ${TOTAL_TOPICS - DONE_TOPICS} remaining</div>
-                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#60a5fa;">🎯 ${Math.round((DONE_TOPICS / TOTAL_TOPICS) * 100)}% complete</div>
-                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#a78bfa;">📖 Click any topic for details</div>
+                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#60a5fa;">🎯 ${overallPct}% complete</div>
+                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#a78bfa;">📖 Tap any topic for details</div>
                 </div>
-                <div class="progress-item"><div class="label"><span>Overall Progress</span><span>${Math.round((DONE_TOPICS / TOTAL_TOPICS) * 100)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${Math.round((DONE_TOPICS / TOTAL_TOPICS) * 100)}%"></div></div></div>
+                <div class="progress-item"><div class="label"><span>Overall Progress</span><span>${overallPct}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${overallPct}%"></div></div></div>
+              </div>
+
+              <div class="card full">
+                <div class="syllabus-toolbar">
+                  <div class="syllabus-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="syllabusSearchInput" placeholder="Search topics…" value="${escapeHtml(syllabusState.query)}" aria-label="Search syllabus topics" />
+                  </div>
+                  <div class="filter-chip-group" id="filterChipGroup">
+                    ${[
+                ['all', 'All'], ['done', '✅ Done'], ['remaining', '⏳ Remaining'],
+                ['easy', 'Easy'], ['medium', 'Medium'], ['hard', 'Hard']
+            ].map(([key, label]) => `<button class="filter-chip ${syllabusState.filter === key ? 'active' : ''}" data-filter="${key}">${label}</button>`).join('')}
+                  </div>
+                  <div class="expand-controls">
+                    <button id="expandAllBtn">⊕ Expand all</button>
+                    <button id="collapseAllBtn">⊖ Collapse all</button>
+                  </div>
+                </div>
               </div>
             `;
+
+        let anyVisible = false;
 
         SYLLABUS_DATA.forEach((level, li) => {
             const done = level.topics.filter(t => t.done).length;
             const total = level.topics.length;
             const p = Math.round((done / total) * 100);
-            const open = li === 0 ? 'open' : '';
-            const arrowOpen = li === 0 ? 'open' : '';
+
+            const filteredTopics = level.topics
+                .map((t, ti) => ({ ...t, ti }))
+                .filter(t => {
+                    const matchesQuery = !syllabusState.query || t.name.toLowerCase().includes(syllabusState.query.toLowerCase());
+                    let matchesFilter = true;
+                    if (syllabusState.filter === 'done') matchesFilter = t.done;
+                    else if (syllabusState.filter === 'remaining') matchesFilter = !t.done;
+                    else if (['easy', 'medium', 'hard'].includes(syllabusState.filter)) matchesFilter = t.difficulty === syllabusState.filter;
+                    return matchesQuery && matchesFilter;
+                });
+
+            if (filteredTopics.length === 0) return;
+            anyVisible = true;
+
+            const isOpen = syllabusState.expandedLevels.has(li);
             html += `
                 <div class="card syllabus-level">
                   <div class="level-title" data-level="${li}">
                     <span>${level.icon}</span>
-                    <span>${level.level}</span>
-                    <span class="count">${done}/${total} · ${p}%</span>
-                    <span style="margin-left:auto;font-size:0.7rem;color:#6b8aa8;">${p}%</span>
-                    <span class="arrow ${arrowOpen}">▶</span>
+                    <span class="level-name">${level.level}</span>
+                    <span class="count">${done}/${total}</span>
+                    <span class="mini-track"><span class="mini-fill" style="width:${p}%"></span></span>
+                    <span style="font-size:0.7rem;color:#6b8aa8;flex-shrink:0;">${p}%</span>
+                    <span class="arrow ${isOpen ? 'open' : ''}">▶</span>
                   </div>
-                  <div class="topic-list ${open}" data-level="${li}">
-                    ${level.topics.map((t, ti) => `
-                      <div class="topic-item" data-level="${li}" data-topic="${ti}">
-                        <div class="check ${t.done ? 'done' : ''}" data-level="${li}" data-topic="${ti}">✓</div>
+                  <div class="topic-list ${isOpen ? 'open' : ''}" data-level="${li}">
+                    ${filteredTopics.map(t => `
+                      <div class="topic-item" data-level="${li}" data-topic="${t.ti}">
+                        <div class="check ${t.done ? 'done' : ''}" data-level="${li}" data-topic="${t.ti}" role="checkbox" aria-checked="${t.done}" tabindex="0">✓</div>
                         <span class="topic-label">${t.name}</span>
                         <span class="topic-difficulty ${getDifficultyClass(t.difficulty)}">${t.difficulty}</span>
-                        <button class="topic-detail-btn" data-level="${li}" data-topic="${ti}" title="View details">📖</button>
+                        <button class="topic-detail-btn" data-level="${li}" data-topic="${t.ti}" title="View details" aria-label="View details for ${t.name}">📖</button>
                       </div>
                     `).join('')}
                   </div>
                 </div>
               `;
         });
+
+        if (!anyVisible) {
+            html += `<div class="card full"><div class="no-results">🔎 No topics match your search/filter. Try a different term or reset filters.</div></div>`;
+        }
 
         return html;
     },
@@ -650,12 +735,12 @@ function renderView(viewName) {
     const container = document.getElementById('viewContainer');
     container.innerHTML = views[viewName]();
 
-    // update nav
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-    const btn = document.querySelector(`.nav button[data-view="${viewName}"]`);
-    if (btn) btn.classList.add('active');
+    // update nav (sidebar + bottom tab bar share data-view)
+    document.querySelectorAll('.nav button, .bottom-tabbar button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll(`[data-view="${viewName}"]`).forEach(b => b.classList.add('active'));
 
     updateMasteredCount();
+    closeSidebar();
 
     // init view-specific logic
     setTimeout(() => {
@@ -713,22 +798,67 @@ function initOverview() {
 // ─── SYLLABUS ──────────────────────────────────────────
 
 function initSyllabus() {
+    // search input
+    const searchInput = document.getElementById('syllabusSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            syllabusState.query = e.target.value;
+            // expand all levels that have matches while searching
+            if (syllabusState.query) {
+                SYLLABUS_DATA.forEach((l, li) => {
+                    const hasMatch = l.topics.some(t => t.name.toLowerCase().includes(syllabusState.query.toLowerCase()));
+                    if (hasMatch) syllabusState.expandedLevels.add(li);
+                });
+            }
+            renderView('syllabus');
+            // restore focus + caret to the search box after re-render
+            setTimeout(() => {
+                const input = document.getElementById('syllabusSearchInput');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(input.value.length, input.value.length);
+                }
+            }, 0);
+        });
+    }
+
+    // filter chips
+    document.querySelectorAll('#filterChipGroup .filter-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            syllabusState.filter = chip.dataset.filter;
+            renderView('syllabus');
+        });
+    });
+
+    // expand / collapse all
+    const expandAllBtn = document.getElementById('expandAllBtn');
+    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    if (expandAllBtn) {
+        expandAllBtn.addEventListener('click', () => {
+            SYLLABUS_DATA.forEach((_, li) => syllabusState.expandedLevels.add(li));
+            renderView('syllabus');
+        });
+    }
+    if (collapseAllBtn) {
+        collapseAllBtn.addEventListener('click', () => {
+            syllabusState.expandedLevels.clear();
+            renderView('syllabus');
+        });
+    }
+
     // toggle level
     document.querySelectorAll('.level-title').forEach(el => {
         el.addEventListener('click', () => {
-            const li = el.dataset.level;
-            const list = document.querySelector(`.topic-list[data-level="${li}"]`);
-            const arrow = el.querySelector('.arrow');
-            if (list) {
-                list.classList.toggle('open');
-                if (arrow) arrow.classList.toggle('open');
-            }
+            const li = parseInt(el.dataset.level);
+            if (syllabusState.expandedLevels.has(li)) syllabusState.expandedLevels.delete(li);
+            else syllabusState.expandedLevels.add(li);
+            renderView('syllabus');
         });
     });
 
     // toggle topic check
     document.querySelectorAll('.topic-item .check').forEach(el => {
-        el.addEventListener('click', (e) => {
+        const toggle = (e) => {
             e.stopPropagation();
             const li = parseInt(el.dataset.level);
             const ti = parseInt(el.dataset.topic);
@@ -736,6 +866,13 @@ function initSyllabus() {
             if (topic) {
                 topic.done = !topic.done;
                 renderView('syllabus');
+            }
+        };
+        el.addEventListener('click', toggle);
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle(e);
             }
         });
     });
@@ -1207,10 +1344,10 @@ function initKnowledge() {
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-//  NAVIGATION
+//  NAVIGATION (sidebar + mobile bottom tab bar share data-view)
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-document.querySelectorAll('.nav button').forEach(btn => {
+document.querySelectorAll('.nav button, .bottom-tabbar button').forEach(btn => {
     btn.addEventListener('click', () => {
         const view = btn.dataset.view;
         renderView(view);
@@ -1233,7 +1370,8 @@ document.getElementById('focusToggle').addEventListener('click', function () {
 
 (function initParticles() {
     const container = document.getElementById('particleBg');
-    for (let i = 0; i < 30; i++) {
+    const particleCount = window.innerWidth < 768 ? 14 : 30;
+    for (let i = 0; i < particleCount; i++) {
         const p = document.createElement('div');
         p.className = 'particle';
         p.style.left = Math.random() * 100 + '%';
@@ -1249,6 +1387,12 @@ document.getElementById('focusToggle').addEventListener('click', function () {
 
 document.getElementById('dayDisplay').textContent =
     new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+
+// ─── VIEWPORT RESIZE: close drawer if resized to desktop ──
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) closeSidebar();
+});
 
 // ─── INIT ─────────────────────────────────────────────
 
