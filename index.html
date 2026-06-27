@@ -43,12 +43,30 @@
                 <span id="modalLevel">Foundation</span>
                 <span id="modalStatus">✅ Mastered</span>
             </div>
+
+            <div class="modal-section chain-section" id="modalChainSection">
+                <h4>⛓️ Compound Chain <span class="chain-hint">— builds on, leads to</span></h4>
+                <div class="chain-strip" id="modalChainStrip"></div>
+            </div>
+
             <div class="modal-section">
-                <h4>📖 Definition</h4>
+                <div class="modal-tabs-row">
+                    <h4>📖 Definition</h4>
+                    <div class="modal-tabs" id="defTabs">
+                        <button class="tab-btn active" data-tab="basic">🌱 Basic</button>
+                        <button class="tab-btn" data-tab="advanced">🚀 Advanced</button>
+                    </div>
+                </div>
                 <p id="modalDefinition">Definition goes here.</p>
             </div>
             <div class="modal-section">
-                <h4>💻 Example</h4>
+                <div class="modal-tabs-row">
+                    <h4>💻 Example</h4>
+                    <div class="modal-tabs" id="exTabs">
+                        <button class="tab-btn active" data-tab="basic">🌱 Basic</button>
+                        <button class="tab-btn" data-tab="advanced">🚀 Advanced</button>
+                    </div>
+                </div>
                 <div class="code-block" id="modalExample"># code example</div>
             </div>
             <div class="modal-section">
