@@ -284,7 +284,7 @@ function getLevelDot(level) {
 }
 
 function escapeHtml(str) {
-    return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' } [c]));
 }
 
 function updateMasteredCount() {
@@ -430,6 +430,17 @@ const views = {
                     <span>⚡ Neural Net</span>
                   </div>
                   <div class="chart-wrapper" style="height:100px;margin-top:0.4rem;"><canvas id="overviewActivityChart"></canvas></div>
+                </div>
+
+                <div class="card full">
+                  <h2>📐 Compound Learning Curve <span class="sub">— small daily gains, stacked</span></h2>
+                  <div style="display:flex;gap:1.4rem;flex-wrap:wrap;align-items:center;">
+                    <div class="chart-wrapper tall" style="flex:2;min-width:240px;"><canvas id="compoundGrowthChart"></canvas></div>
+                    <div style="flex:1;min-width:200px;font-size:0.8rem;color:#b0c4e0;line-height:1.7;">
+                      Every mastered topic compounds into the next — Python feeds Pandas, Pandas feeds Feature Engineering, Feature Engineering feeds Modeling. Consistent ${timerState.sessions.length > 0 ? '25-min' : 'short'} focus blocks beat occasional marathons.
+                      <div style="margin-top:0.6rem;color:#60a5fa;font-weight:600;">${Math.round((DONE_TOPICS / TOTAL_TOPICS) * 100)}% compounded so far →</div>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="card full">
@@ -759,6 +770,51 @@ function renderView(viewName) {
 // ─── OVERVIEW ──────────────────────────────────────────
 
 function initOverview() {
+    // Compound learning curve: cumulative mastery, weighted so harder topics count for more —
+    // illustrates how small consistent gains stack into a steep curve, like compound interest.
+    const compoundCtx = getCtx('compoundGrowthChart');
+    if (compoundCtx) {
+        const weight = { easy: 1, medium: 1.5, hard: 2 };
+        const allTopics = SYLLABUS_DATA.flatMap(l => l.topics);
+        const totalWeight = allTopics.reduce((a, t) => a + weight[t.difficulty], 0);
+        let running = 0;
+        const cumulative = [0];
+        allTopics.forEach(t => {
+            if (t.done) running += weight[t.difficulty];
+            cumulative.push(Math.round((running / totalWeight) * 100));
+        });
+        // project a gentle continuation for remaining (undone) steps to show the "compounding" trend
+        const labels = ['Start', ...allTopics.map((t, i) => `T${i + 1}`)];
+        buildChart('compoundGrowthChart', {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [{
+                    label: 'Compounded mastery %',
+                    data: cumulative,
+                    borderColor: '#a78bfa',
+                    backgroundColor: 'rgba(167,139,250,0.12)',
+                    fill: true,
+                    tension: 0.35,
+                    pointRadius: 0,
+                    borderWidth: 2.5,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { display: false }, grid: { color: '#1a2d4a' } },
+                    y: {
+                        ticks: { color: '#6b8aa8', font: { size: 8 }, callback: (v) => v + '%' },
+                        grid: { color: '#1a2d4a' }, beginAtZero: true, max: 100
+                    }
+                }
+            }
+        });
+    }
+
     const ctx = getCtx('overviewActivityChart');
     if (ctx) {
         buildChart('overviewActivityChart', {
