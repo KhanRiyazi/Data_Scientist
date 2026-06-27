@@ -6,10 +6,29 @@ const SYLLABUS_DATA = [{
     level: 'Foundation',
     icon: '🌱',
     topics: [{
+        name: 'Data Science Methodology & Tools',
+        difficulty: 'easy',
+        done: false,
+        prerequisites: [],
+        ibmCourse: 'Courses 1–3 · What is Data Science? / Tools for Data Science / Data Science Methodology',
+        definition: {
+            basic: 'Before writing any code, every working data scientist follows a repeatable process for tackling a problem — understand the business question, get the data, explore it, build a model, evaluate it, and deploy it. CRISP-DM is the most widely taught version of this cycle, and Jupyter Notebooks, GitHub, and SQL are the everyday tools used at each stage.',
+            advanced: 'CRISP-DM\'s six phases (Business Understanding → Data Understanding → Data Preparation → Modeling → Evaluation → Deployment) are explicitly non-linear — teams loop back from Evaluation to Data Preparation constantly as they learn what the data actually supports. The real skill this stage teaches isn\'t the diagram itself, it\'s estimating where most of your time will go: in practice, Data Understanding + Preparation typically consumes 60–80% of a project\'s total effort, far more than Modeling.'
+        },
+        example: `# A CRISP-DM-style problem framing, written before any code\nproblem = {\n    "business_question": "Which customers are likely to churn next month?",\n    "data_sources": ["billing_history.csv", "support_tickets.db", "usage_logs.parquet"],\n    "success_metric": "Recall on churners >= 0.75 (catching churn matters more than false alarms)",\n    "deployment_target": "Weekly batch score -> CRM dashboard for the retention team"\n}\n\nfor key, value in problem.items():\n    print(f"{key.replace('_', ' ').title()}: {value}")`,
+        advancedExample: `# Tracking where time actually goes across a project — a habit worth building early\nimport pandas as pd\n\nphases = pd.DataFrame({\n    'phase': ['Business Understanding', 'Data Understanding', 'Data Preparation',\n              'Modeling', 'Evaluation', 'Deployment'],\n    'planned_hours': [4, 10, 10, 8, 4, 4],\n    'actual_hours':  [3, 14, 22, 6, 3, 2],   # prep almost always overruns the plan\n})\nphases['overrun_pct'] = ((phases['actual_hours'] - phases['planned_hours'])\n                          / phases['planned_hours'] * 100).round(1)\nprint(phases.to_string(index=False))\nprint(f"\\nTotal: planned {phases.planned_hours.sum()}h vs actual {phases.actual_hours.sum()}h")`,
+        resources: [
+            { name: 'IBM: What is Data Science? (Course 1)', url: 'https://www.coursera.org/learn/what-is-datascience', icon: '🎓' },
+            { name: 'IBM: Tools for Data Science (Course 2)', url: 'https://www.coursera.org/learn/open-source-tools-for-data-science', icon: '🎓' },
+            { name: 'IBM: Data Science Methodology (Course 3)', url: 'https://www.coursera.org/learn/data-science-methodology', icon: '🎓' },
+            { name: 'CRISP-DM Overview (practice)', url: 'https://www.datascience-pm.com/crisp-dm-2/', icon: '🏆' },
+        ]
+    }, {
         name: 'Python for Data Science',
         difficulty: 'easy',
         done: true,
-        prerequisites: [],
+        prerequisites: ['Data Science Methodology & Tools'],
+        ibmCourse: 'Course 4 · Python for Data Science, AI & Development',
         definition: {
             basic: 'Python is a beginner-friendly programming language that reads almost like English. In data science, it is the glue that connects your data, your analysis, and your results — you use it to load files, clean messy values, and run calculations a spreadsheet could never handle.',
             advanced: 'Python\'s dominance in data science comes from its C-backed numerical stack (NumPy/Pandas use vectorized operations under the hood, sidestepping the interpreter\'s GIL for heavy math) plus a mature ecosystem — scikit-learn for classical ML, PyTorch/TensorFlow for deep learning, and a consistent array-protocol (`__array__`) that lets these libraries interoperate seamlessly.'
@@ -27,6 +46,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'easy',
         done: true,
         prerequisites: [],
+        ibmCourse: 'Supplementary — not in the official 12-course list, recommended as deeper foundation',
         definition: {
             basic: 'Linear algebra is the math of lists-of-numbers (vectors) and grids-of-numbers (matrices). Every dataset is secretly a matrix, every image is a grid of pixel-vectors, and every neural network layer is just a matrix multiplication — so this is the language everything else in ML is written in.',
             advanced: 'Beyond basic matrix multiplication, eigendecomposition and singular value decomposition (SVD) underpin PCA, recommender systems, and the attention mechanism\'s low-rank projections. Understanding rank, null space, and condition number explains why some models fail to converge or why features need to be decorrelated before training.'
@@ -44,6 +64,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'easy',
         done: false,
         prerequisites: ['Linear Algebra Essentials'],
+        ibmCourse: 'Supplementary — not in the official 12-course list, recommended as deeper foundation',
         definition: {
             basic: 'Calculus tells a model which direction to "nudge" its parameters to get better. A derivative measures slope — how much the error changes when a weight changes a tiny bit — and that single idea, repeated millions of times, is literally how every neural network learns.',
             advanced: 'Backpropagation is reverse-mode automatic differentiation applied to the chain rule across a computation graph. The gradient is a vector field over parameter space; optimizers like Adam combine first and second moment estimates of that gradient to adapt the step size per-parameter, which is why they converge faster than vanilla gradient descent on ill-conditioned loss surfaces.'
@@ -61,6 +82,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'easy',
         done: true,
         prerequisites: [],
+        ibmCourse: 'Supplementary — lightly covered inside Courses 7 & 9, expanded here',
         definition: {
             basic: 'Statistics helps you summarize data (mean, spread) and decide whether a pattern you see is real or just noise. Probability is the math of uncertainty — it lets you say "70% confident" instead of just guessing, which is the foundation of every model\'s predictions.',
             advanced: 'Frequentist hypothesis testing (p-values, confidence intervals) and Bayesian inference (priors, posteriors, credible intervals) offer two lenses on the same uncertainty — Bayesian methods are increasingly preferred in ML because they naturally express model uncertainty and update cleanly as new data arrives, which matters for A/B testing and active learning.'
@@ -78,6 +100,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'easy',
         done: false,
         prerequisites: ['Python for Data Science'],
+        ibmCourse: 'Course 7 · Data Analysis with Python',
         definition: {
             basic: 'Real-world data is messy — missing values, typos, inconsistent formats. Data wrangling is the process of cleaning and reshaping that mess into a tidy table you can actually analyze. Pandas gives you the tools to do this in a few lines instead of hundreds.',
             advanced: 'Beyond `fillna`/`dropna`, production wrangling means designing idempotent, chainable pipelines (`.pipe()`), handling categorical memory efficiently with `Categorical` dtype, and using `merge`/`groupby.transform` correctly to avoid subtle data leakage — e.g. computing a rolling mean that accidentally uses future rows during feature engineering.'
@@ -91,10 +114,29 @@ const SYLLABUS_DATA = [{
             { name: 'Pandas Cookbook (practice)', url: 'https://pandas.pydata.org/docs/user_guide/cookbook.html', icon: '🏆' },
         ]
     }, {
+        name: 'SQL & Relational Databases',
+        difficulty: 'easy',
+        done: false,
+        prerequisites: ['Python for Data Science'],
+        ibmCourse: 'Course 6 · Databases and SQL for Data Science with Python',
+        definition: {
+            basic: 'Most of the world\'s data still lives in databases, not CSV files — SQL is the language for asking questions of it directly: "show me all customers from California who spent over $500." Combined with Python, you can pull exactly the data you need instead of dumping entire tables into memory.',
+            advanced: 'Query planners optimize SQL based on indexes, statistics, and join order — writing a `WHERE` clause on an indexed column can be 100x faster than scanning a full table. Window functions (`OVER (PARTITION BY ... ORDER BY ...)`) let you compute running totals, rankings, and period-over-period comparisons in a single query, replacing what would otherwise require pulling data into Pandas and looping.'
+        },
+        example: `import sqlite3\nimport pandas as pd\n\nconn = sqlite3.connect(':memory:')\nconn.execute("""\n    CREATE TABLE customers (\n        id INTEGER PRIMARY KEY, name TEXT, state TEXT, total_spent REAL\n    )\n""")\nconn.executemany("INSERT INTO customers VALUES (?,?,?,?)", [\n    (1, 'Alice', 'CA', 620), (2, 'Bob', 'NY', 150), (3, 'Eve', 'CA', 980)\n])\n\nquery = "SELECT name, total_spent FROM customers WHERE state = 'CA' AND total_spent > 500"\ndf = pd.read_sql(query, conn)\nprint(df)`,
+        advancedExample: `import sqlite3\nimport pandas as pd\n\nconn = sqlite3.connect(':memory:')\nconn.execute("CREATE TABLE orders (customer_id INT, month TEXT, revenue REAL)")\nconn.executemany("INSERT INTO orders VALUES (?,?,?)", [\n    (1, '2024-01', 100), (1, '2024-02', 150), (1, '2024-03', 90),\n    (2, '2024-01', 200), (2, '2024-02', 220), (2, '2024-03', 260),\n])\n\n# Window function: running total + rank, no Python loop needed\nquery = """\n    SELECT customer_id, month, revenue,\n           SUM(revenue) OVER (PARTITION BY customer_id ORDER BY month) AS running_total,\n           RANK() OVER (PARTITION BY month ORDER BY revenue DESC) AS month_rank\n    FROM orders\n"""\nprint(pd.read_sql(query, conn))`,
+        resources: [
+            { name: 'IBM: Databases and SQL (Course 6)', url: 'https://www.coursera.org/learn/sql-data-science', icon: '🎓' },
+            { name: 'Mode SQL Tutorial', url: 'https://mode.com/sql-tutorial/', icon: '📘' },
+            { name: 'SQLZoo (interactive practice)', url: 'https://sqlzoo.net/', icon: '🏆' },
+            { name: 'Use The Index, Luke (query performance)', url: 'https://use-the-index-luke.com/', icon: '📖' },
+        ]
+    }, {
         name: 'Data Visualization (Matplotlib)',
         difficulty: 'easy',
         done: true,
         prerequisites: ['Data Wrangling (Pandas)'],
+        ibmCourse: 'Course 8 · Data Visualization with Python',
         definition: {
             basic: 'A good chart answers a question faster than a table of numbers ever could. Matplotlib is Python\'s foundational plotting library — line charts for trends, histograms for distributions, scatter plots for relationships — and almost every other Python visualization library is built on top of it.',
             advanced: 'Effective visualization is a perceptual science: position and length encode quantity more accurately than color or area (per Cleveland & McGill), small multiples beat single cluttered charts for comparison, and log scales are essential when data spans orders of magnitude. Matplotlib\'s object-oriented API (`fig, ax = plt.subplots()`) is preferred over the implicit `plt.*` calls once you need fine control or multi-panel figures.'
@@ -116,6 +158,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'medium',
         done: false,
         prerequisites: ['Statistics & Probability', 'Data Wrangling (Pandas)'],
+        ibmCourse: 'Course 9 · Machine Learning with Python',
         definition: {
             basic: 'Supervised learning is teaching a model by example: you show it inputs paired with correct answers (e.g. house features → price) until it learns the pattern well enough to guess the answer for new, unseen inputs. Regression predicts numbers; classification predicts categories.',
             advanced: 'Every supervised algorithm is implicitly minimizing a loss function over a hypothesis space, trading bias against variance. Linear models have high bias/low variance; deep trees and neural nets have low bias/high variance — regularization (L1/L2, max-depth, dropout) is the lever that moves you along that tradeoff to match your data\'s actual complexity.'
@@ -133,6 +176,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'medium',
         done: false,
         prerequisites: ['Linear Algebra Essentials', 'Data Wrangling (Pandas)'],
+        ibmCourse: 'Course 9 · Machine Learning with Python',
         definition: {
             basic: 'Unsupervised learning finds structure in data with no "correct answers" given. Clustering groups similar customers or images together; dimensionality reduction compresses hundreds of noisy columns into a handful that capture what actually matters.',
             advanced: 'K-Means assumes spherical, equally-sized clusters and minimizes within-cluster variance via Lloyd\'s algorithm — it fails on elongated or differently-scaled clusters, where DBSCAN (density-based) or Gaussian Mixture Models (soft, covariance-aware clustering) do better. Dimensionality reduction choices matter too: PCA preserves global variance linearly, while t-SNE/UMAP preserve local neighborhood structure non-linearly for visualization.'
@@ -150,6 +194,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'medium',
         done: true,
         prerequisites: ['Data Wrangling (Pandas)', 'Supervised Learning'],
+        ibmCourse: 'Course 7 · Data Analysis with Python',
         definition: {
             basic: 'Feature engineering is creating new, more useful columns from your raw data — like turning a birthdate into "age" or a timestamp into "is_weekend". Good features often matter more than the choice of algorithm; even a simple model can shine with the right inputs.',
             advanced: 'Target leakage is the most dangerous feature-engineering bug: any feature computed using information that wouldn\'t be available at prediction time (e.g. a future aggregate, or a value derived from the label) inflates validation metrics while destroying production performance. Robust feature pipelines fit transformers only on training folds and use techniques like target encoding with out-of-fold statistics to avoid this.'
@@ -167,6 +212,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'medium',
         done: false,
         prerequisites: ['Supervised Learning'],
+        ibmCourse: 'Course 9 · Machine Learning with Python',
         definition: {
             basic: 'Before trusting a model, you need to know how well it really performs on data it has never seen. Techniques like train/test splits and cross-validation simulate "the future" so you can measure accuracy, precision, and recall honestly instead of fooling yourself.',
             advanced: 'Accuracy is misleading on imbalanced data — a model predicting "no fraud" 99.9% of the time looks accurate but is useless. Precision/recall, F1, and ROC-AUC/PR-AUC capture different tradeoffs (PR-AUC is preferred when positives are rare), and stratified k-fold or time-series-aware splits (no shuffling across time!) are required to get an honest estimate when the data has structure.'
@@ -184,6 +230,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'medium',
         done: false,
         prerequisites: ['Supervised Learning'],
+        ibmCourse: 'Course 9 · Machine Learning with Python',
         definition: {
             basic: 'A decision tree makes predictions by asking a series of yes/no questions about your data, like "Is income > $50k?". A Random Forest grows hundreds of slightly different trees and averages their votes, which is usually far more accurate and harder to overfit than any single tree.',
             advanced: 'Trees split nodes by greedily maximizing information gain (entropy reduction) or Gini impurity reduction at each step — a locally optimal, globally suboptimal strategy that overfits easily, hence the high variance. Random Forests reduce that variance via bagging (bootstrap sampling) plus random feature subsetting at each split, decorrelating the trees so their errors partially cancel out when averaged.'
@@ -201,6 +248,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'hard',
         done: false,
         prerequisites: ['Calculus for ML', 'Linear Algebra Essentials', 'Supervised Learning'],
+        ibmCourse: 'Supplementary — beyond the official 12-course curriculum',
         definition: {
             basic: 'A neural network is loosely inspired by neurons in the brain — layers of simple math units that each take weighted inputs, apply a small non-linear "activation," and pass the result onward. Stacked together, this lets the network learn very complex patterns, like recognizing handwritten digits or faces.',
             advanced: 'Without non-linear activations (ReLU, tanh, sigmoid), stacking linear layers would collapse into a single linear transform — depth would add nothing. ReLU\'s popularity comes from cheap computation and resistance to vanishing gradients compared to sigmoid/tanh, though it introduces its own failure mode ("dying ReLU") that batch normalization and careful initialization (He/Xavier) help mitigate.'
@@ -222,6 +270,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'hard',
         done: false,
         prerequisites: ['Neural Networks Basics'],
+        ibmCourse: 'Supplementary — beyond the official 12-course curriculum',
         definition: {
             basic: 'Deep learning stacks many neural network layers to learn increasingly abstract patterns. CNNs scan images with small filters to detect edges, then shapes, then objects. RNNs read sequences (text, time series) one step at a time, carrying a "memory" of what came before.',
             advanced: 'CNNs exploit two inductive biases that make them efficient for images: translation equivariance (a filter detects the same pattern anywhere in the image) and local connectivity (nearby pixels matter more than distant ones), drastically reducing parameters versus a fully-connected layer. Vanilla RNNs suffer from vanishing/exploding gradients over long sequences — LSTMs/GRUs introduce gating mechanisms to control what is remembered or forgotten, which is why they largely replaced plain RNNs before attention-based models took over.'
@@ -239,6 +288,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'hard',
         done: false,
         prerequisites: ['Neural Networks Basics', 'Deep Learning (CNNs, RNNs)'],
+        ibmCourse: 'Supplementary — beyond the official 12-course curriculum',
         definition: {
             basic: 'Natural Language Processing teaches computers to work with human language — sentiment analysis, translation, chatbots. Transformers are the current state of the art (powering models like GPT and BERT): instead of reading text one word at a time like an RNN, they look at the whole sentence at once and learn which words matter to which other words.',
             advanced: 'Self-attention computes a weighted combination of all token representations, where the weights come from scaled dot-products of learned query/key vectors — this lets the model relate "it" to the correct noun three sentences back without the vanishing-gradient problem RNNs face. Multi-head attention runs several of these in parallel subspaces, and positional encodings inject word-order information that attention alone discards.'
@@ -256,6 +306,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'hard',
         done: false,
         prerequisites: ['Data Wrangling (Pandas)'],
+        ibmCourse: 'Supplementary — beyond the official 12-course curriculum',
         definition: {
             basic: 'When data is too big to fit on one computer, you spread the work across many machines. Hadoop pioneered this with distributed storage and batch processing; Apache Spark improved on it with fast, in-memory processing — letting you write Pandas-like code that scales to terabytes.',
             advanced: 'Spark\'s core abstraction is the Resilient Distributed Dataset (RDD) / DataFrame, evaluated lazily and split into partitions processed in parallel across a cluster — a job\'s execution plan (the DAG) is only triggered by an "action" like `.collect()` or `.write()`. Shuffle operations (joins, groupBy across partitions) are the main performance bottleneck, since they require moving data across the network; minimizing shuffles via partitioning strategy is the key to scaling Spark jobs efficiently.'
@@ -273,6 +324,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'hard',
         done: false,
         prerequisites: ['Model Evaluation & Validation', 'Decision Trees & Random Forest'],
+        ibmCourse: 'Supplementary — beyond the official 12-course curriculum',
         definition: {
             basic: 'A model sitting in a notebook helps no one — MLOps is everything needed to get it safely into production and keep it healthy: tracking experiments, versioning models and data, deploying behind an API, and monitoring for when it starts performing worse over time.',
             advanced: 'The hardest production problem is usually drift, not deployment: data drift (input distributions shift), concept drift (the relationship between inputs and target changes), and training-serving skew (subtle differences between offline feature computation and the online serving path) silently degrade a model that looked fine at launch. Mature MLOps pipelines version data, code, and model artifacts together and run shadow/canary deployments before fully routing traffic to a new model.'
@@ -290,6 +342,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'hard',
         done: false,
         prerequisites: ['Neural Networks Basics', 'Statistics & Probability'],
+        ibmCourse: 'Supplementary — beyond the official 12-course curriculum',
         definition: {
             basic: 'Reinforcement Learning is learning by trial and error: an agent takes actions in an environment, gets rewards or penalties, and gradually learns a strategy ("policy") that maximizes long-term reward — the same way you learn a video game by playing it, not by reading a manual.',
             advanced: 'The exploration-exploitation tradeoff is the central tension: an agent must try uncertain actions (exploration) to discover better strategies while also exploiting what it already knows works. Value-based methods (Q-learning, DQN) learn the expected return of each action; policy-gradient methods (REINFORCE, PPO) directly optimize the policy itself and handle continuous action spaces more naturally, which is why most modern RL (including RLHF used to fine-tune language models) is policy-gradient based.'
@@ -307,6 +360,7 @@ const SYLLABUS_DATA = [{
         difficulty: 'medium',
         done: false,
         prerequisites: ['Model Evaluation & Validation'],
+        ibmCourse: 'Course 11 · Generative AI: Elevate Your Data Science Career',
         definition: {
             basic: 'AI Ethics asks whether a model is fair, transparent, and safe — not just accurate. A model that\'s 95% accurate overall but systematically wrong for one demographic group isn\'t actually a success; responsible AI practices catch and fix issues like this before deployment.',
             advanced: 'Fairness has multiple, sometimes mutually-incompatible mathematical definitions — demographic parity (equal positive prediction rates across groups), equalized odds (equal true/false positive rates), and individual fairness (similar people get similar predictions) can each be satisfied while violating the others, so "fair" requires an explicit choice of which definition matters for the use case, not just running a generic bias-audit library.'
@@ -318,6 +372,60 @@ const SYLLABUS_DATA = [{
             { name: 'AI Fairness 360', url: 'https://aif360.mybluemix.net/', icon: '⚖️' },
             { name: 'Ethics in AI (MIT)', url: 'https://www.media.mit.edu/groups/ethics-of-artificial-intelligence/overview/', icon: '🎓' },
             { name: 'Fairness in ML (practice)', url: 'https://fairmlbook.org/', icon: '🏆' },
+        ]
+    }, {
+        name: 'Generative AI for Data Science',
+        difficulty: 'medium',
+        done: false,
+        prerequisites: ['Feature Engineering', 'NLP & Transformers'],
+        ibmCourse: 'Course 11 · Generative AI: Elevate Your Data Science Career',
+        definition: {
+            basic: 'Generative AI tools (like ChatGPT-style models) can now help a data scientist draft code, summarize messy data, generate synthetic training examples, and even explain a confusing dataset in plain English — used well, they speed up almost every stage of a project rather than replacing the data scientist\'s judgment.',
+            advanced: 'Using an LLM inside a data pipeline introduces new failure modes beyond standard model risk: hallucinated facts presented confidently, prompt injection from untrusted data fields, and non-determinism that complicates reproducibility. Production GenAI-in-the-loop systems typically pin model versions, log every prompt/response pair for auditability, and validate generated code or synthetic data against the same statistical checks you\'d apply to any other untrusted input.'
+        },
+        example: `# Conceptual: using an LLM to draft a data-cleaning function from a description\n# response = client.chat.completions.create(\n#     model="gpt-4",\n#     messages=[{"role": "user", "content":\n#         "Write a pandas function that standardizes US phone numbers to (XXX) XXX-XXXX"}]\n# )\n\nprint("Prompt -> generated code -> ALWAYS review and test before trusting it on real data.")\nprint("Treat LLM-generated code the same way you'd treat a junior teammate's first draft.")`,
+        advancedExample: `import re\n\n# Validating LLM-generated code/output before it touches production data\n# (a lightweight example of the kind of guardrail real pipelines need)\ndef looks_like_valid_phone_formatter(code_str: str) -> bool:\n    required_patterns = [r"def \\w+\\(", r"return"]\n    forbidden_patterns = [r"\\bos\\.", r"\\beval\\(", r"\\bexec\\(", r"open\\("]\n    has_required = all(re.search(p, code_str) for p in required_patterns)\n    has_forbidden = any(re.search(p, code_str) for p in forbidden_patterns)\n    return has_required and not has_forbidden\n\nsuspect_code = "def clean_phone(s):\\n    import os\\n    return s"\nsafe_code = "def clean_phone(s):\\n    return s.strip()"\n\nprint(f"Suspect snippet passes safety check: {looks_like_valid_phone_formatter(suspect_code)}")\nprint(f"Safe snippet passes safety check:    {looks_like_valid_phone_formatter(safe_code)}")`,
+        resources: [
+            { name: 'IBM: Generative AI for Data Science (Course 11)', url: 'https://www.coursera.org/learn/generative-ai-elevate-your-data-science-career', icon: '🎓' },
+            { name: 'OpenAI Cookbook', url: 'https://cookbook.openai.com/', icon: '📘' },
+            { name: 'Prompt Engineering Guide', url: 'https://www.promptingguide.ai/', icon: '📖' },
+            { name: 'Hugging Face: LLM Course (practice)', url: 'https://huggingface.co/learn/llm-course', icon: '🏆' },
+        ]
+    }, {
+        name: 'Applied Capstone Project & Portfolio',
+        difficulty: 'hard',
+        done: false,
+        prerequisites: ['Model Evaluation & Validation', 'Data Visualization (Matplotlib)', 'SQL & Relational Databases'],
+        ibmCourse: 'Course 10 · Applied Data Science Capstone',
+        definition: {
+            basic: 'The capstone is where every earlier topic comes together into one real, end-to-end project — scrape or query real data, clean it, explore it, build and compare a few models, and present the results like you would to a manager. This is the single artifact employers look at first, more than any certificate.',
+            advanced: 'A capstone that actually gets you hired treats the write-up as a product, not an afterthought: a clear problem statement, a baseline model stated explicitly (so improvements are measurable), an honest discussion of what didn\'t work and why, and a reproducible repo (pinned dependencies, a README that runs end-to-end). Interviewers consistently probe "what would you do differently" — having a genuine answer signals more seniority than the model\'s accuracy number ever will.'
+        },
+        example: `# A capstone project skeleton — the structure matters as much as the model\nproject_structure = """\ncapstone-project/\n├── README.md          <- problem statement, how to run, key findings\n├── requirements.txt   <- pinned versions for reproducibility\n├── data/               <- raw + processed data (or a download script)\n├── notebooks/          <- exploration, one notebook per project stage\n├── src/                <- reusable functions extracted out of notebooks\n└── reports/            <- final charts and a one-page summary for stakeholders\n"""\nprint(project_structure)\nprint("Treat this exactly like a project you'd hand off to a teammate.")`,
+        advancedExample: `import pandas as pd\nimport numpy as np\nfrom sklearn.dummy import DummyClassifier\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score, f1_score\n\n# Always report a baseline alongside your real model — it's the only way\n# a reader can tell if your model is actually adding value\nnp.random.seed(0)\nX = np.random.randn(500, 6)\ny = (X[:, 0] + X[:, 1] * 0.5 + np.random.randn(500) * 0.5 > 0).astype(int)\nX_train, X_test, y_train, y_test = train_test_split(X, y, random_state=42)\n\nbaseline = DummyClassifier(strategy='most_frequent').fit(X_train, y_train)\nmodel = RandomForestClassifier(random_state=42).fit(X_train, y_train)\n\nfor name, m in [('Baseline (majority class)', baseline), ('Random Forest', model)]:\n    preds = m.predict(X_test)\n    print(f"{name:28s} acc={accuracy_score(y_test, preds):.3f}  f1={f1_score(y_test, preds):.3f}")`,
+        resources: [
+            { name: 'IBM: Applied Data Science Capstone (Course 10)', url: 'https://www.coursera.org/learn/applied-data-science-capstone', icon: '🎓' },
+            { name: 'GitHub: Data Science Project Template', url: 'https://github.com/drivendataorg/cookiecutter-data-science', icon: '📘' },
+            { name: 'Kaggle Competitions (practice)', url: 'https://www.kaggle.com/competitions', icon: '🏆' },
+            { name: 'How to Write a Great README', url: 'https://www.makeareadme.com/', icon: '📖' },
+        ]
+    }, {
+        name: 'Career Guide & Interview Prep',
+        difficulty: 'medium',
+        done: false,
+        prerequisites: ['Applied Capstone Project & Portfolio'],
+        ibmCourse: 'Course 12 · Data Scientist Career Guide and Interview Preparation',
+        definition: {
+            basic: 'Finishing the technical work is only half the job — this is where you package your portfolio, write a resume that survives a recruiter\'s 7-second scan, and practice the kinds of interview questions (technical + behavioral) that actually get asked for data science roles.',
+            advanced: 'Data science interviews typically test four separate dimensions — SQL/coding screens, statistics & ML fundamentals (often via "explain X to a non-technical stakeholder"), case-study/product-sense questions, and behavioral fit — and weak performance in any single one can sink an otherwise strong candidate. The STAR method (Situation, Task, Action, Result) for behavioral answers and walking through your capstone\'s baseline-vs-final-model comparison are two of the highest-leverage things to rehearse explicitly before interviewing.'
+        },
+        example: `# A STAR-formatted answer skeleton, worth pre-writing for 3-5 of your strongest projects\nstar_answer = {\n    "Situation": "Our retention dashboard relied on a model that hadn't been retrained in 8 months.",\n    "Task": "Detect whether performance had degraded, and fix it if so.",\n    "Action": "Computed PSI on the top 5 features, found significant drift, retrained on recent data.",\n    "Result": "Recall on churners improved from 0.61 to 0.79 in the next month's validation."\n}\nfor k, v in star_answer.items():\n    print(f"{k}: {v}")`,
+        advancedExample: `# Self-scoring a resume bullet against what recruiters actually scan for\ndef score_bullet(bullet: str) -> dict:\n    has_number = any(ch.isdigit() for ch in bullet)\n    has_action_verb = bullet.strip().split()[0][:-1].lower() in {\n        'built', 'improved', 'reduced', 'designed', 'automated', 'led', 'deployed', 'shipped'\n    }\n    word_count = len(bullet.split())\n    return {\n        'has_metric': has_number,\n        'starts_with_action_verb': has_action_verb,\n        'concise': word_count <= 25,\n    }\n\nweak = "Worked on a project related to customer data using Python and some machine learning tools."\nstrong = "Built a churn model in Python that improved recall from 61% to 79%, saving an est. $40K/mo."\n\nfor label, bullet in [('Weak', weak), ('Strong', strong)]:\n    print(f"{label}: {score_bullet(bullet)}")`,
+        resources: [
+            { name: 'IBM: Career Guide & Interview Prep (Course 12)', url: 'https://www.coursera.org/learn/career-guide-and-interview-prep-for-data-science-pc', icon: '🎓' },
+            { name: 'Glassdoor: DS Interview Questions', url: 'https://www.glassdoor.com/Interview/data-scientist-interview-questions-SRCH_KO0,14.htm', icon: '📖' },
+            { name: 'StrataScratch (SQL/DS practice)', url: 'https://www.stratascratch.com/', icon: '🏆' },
+            { name: 'LinkedIn: IBM Talent Network info', url: 'https://www.coursera.org/professional-certificates/ibm-data-science', icon: '🌐' },
         ]
     }]
 }];
@@ -474,6 +582,11 @@ function openTopicModal(topic, levelName) {
     document.getElementById('modalLevel').textContent = '📍 ' + levelName;
     document.getElementById('modalStatus').textContent = topic.done ? '✅ Mastered' : '⏳ In Progress';
     document.getElementById('modalStatus').style.color = topic.done ? '#4ade80' : '#fbbf24';
+
+    const ibmEl = document.getElementById('modalIbmCourse');
+    const isSupplementary = (topic.ibmCourse || '').startsWith('Supplementary');
+    ibmEl.textContent = (isSupplementary ? '🧭 ' : '📜 IBM Cert — ') + (topic.ibmCourse || 'Not mapped');
+    ibmEl.classList.toggle('supplementary', isSupplementary);
 
     // compound chain strip (prerequisites -> this topic -> what it unlocks)
     document.getElementById('modalChainStrip').innerHTML = renderChainStrip(topic);
@@ -648,6 +761,9 @@ const views = {
         let html = `
               <div class="card full">
                 <h2>📚 Data Science Syllabus <span class="sub">— ${DONE_TOPICS}/${TOTAL_TOPICS} completed</span></h2>
+                <div class="syllabus-source-banner">
+                  📜 Aligned with the official <a href="https://www.coursera.org/professional-certificates/ibm-data-science" target="_blank" rel="noopener">IBM Data Science Professional Certificate</a> (12-course series, Coursera) — each topic's detail view shows which IBM course it maps to. Topics marked "Supplementary" go deeper than the official syllabus.
+                </div>
                 <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;">
                   <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#4ade80;">✅ ${DONE_TOPICS} mastered</div>
                   <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#fbbf24;">⏳ ${TOTAL_TOPICS - DONE_TOPICS} remaining</div>
