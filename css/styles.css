@@ -642,6 +642,76 @@ body {
     padding: 1.6rem 0.5rem;
 }
 
+/* ─── PYTHON KEY PROGRAM FORMULA CARDS ─── */
+.formula-card {
+    border: 1px solid #1a2d4a;
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    margin-bottom: 0.5rem;
+    background: rgba(11, 20, 40, 0.5);
+    transition: border-color 0.2s;
+}
+
+.formula-card:hover {
+    border-color: #2a4a7a;
+}
+
+.formula-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    cursor: pointer;
+}
+
+.formula-name {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #e2e8f0;
+    min-width: 140px;
+}
+
+.formula-toggle-btn {
+    background: #14233e;
+    border: 1px solid #1a2d4a;
+    color: #93bbfc;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: 0.2s;
+    flex-shrink: 0;
+}
+
+.formula-toggle-btn:hover {
+    border-color: #3b82f6;
+    background: #1a2d4a;
+}
+
+.formula-key {
+    margin-top: 0.5rem;
+    background: rgba(167, 139, 250, 0.08);
+    border-left: 3px solid #a78bfa;
+    border-radius: 0 8px 8px 0;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.82rem;
+    color: #d8cffb;
+    line-height: 1.55;
+}
+
+.formula-code-wrap {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.formula-code-wrap.open {
+    max-height: 2000px;
+    margin-top: 0.6rem;
+}
+
 /* ─── SYLLABUS ─── */
 .syllabus-level {
     margin-bottom: 1rem;

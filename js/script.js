@@ -433,6 +433,221 @@ const TOTAL_TOPICS = SYLLABUS_DATA.reduce((acc, l) => acc + l.topics.length, 0);
 let DONE_TOPICS = SYLLABUS_DATA.reduce((acc, l) => acc + l.topics.filter(t => t.done).length, 0);
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  DATA — PYTHON "KEY PROGRAMS" (memorizable formulas, like the
+//  quadratic formula: a fixed pattern that solves a whole class of problems)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+const PY_FORMULAS_DATA = [{
+    category: 'Numbers',
+    icon: '🔢',
+    programs: [{
+        name: 'Swap Two Numbers (no temp variable)',
+        difficulty: 'easy',
+        key: 'a, b = b, a — Python unpacks the right side fully before assigning, so no temp variable is ever needed.',
+        code: `a, b = 5, 10\na, b = b, a\nprint(f"a={a}, b={b}")`,
+        output: `a=10, b=5`
+    }, {
+        name: 'Factorial of a Number',
+        difficulty: 'easy',
+        key: 'n! = n × (n-1) × ... × 1. Start a running product at 1, multiply through range(1, n+1).',
+        code: `def factorial(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result\n\nprint(factorial(6))`,
+        output: `720`
+    }, {
+        name: 'Fibonacci Sequence (iterative)',
+        difficulty: 'easy',
+        key: 'Keep only the last two values and slide them forward: a, b = b, a+b. No need to store the whole sequence.',
+        code: `def fibonacci(n):\n    a, b = 0, 1\n    sequence = []\n    for _ in range(n):\n        sequence.append(a)\n        a, b = b, a + b\n    return sequence\n\nprint(fibonacci(10))`,
+        output: `[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`
+    }, {
+        name: 'Check Prime Number',
+        difficulty: 'easy',
+        key: 'A number is prime if nothing from 2 up to √n divides it evenly — you never need to check past the square root.',
+        code: `def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\nprint(is_prime(29), is_prime(30))`,
+        output: `True False`
+    }, {
+        name: 'GCD & LCM of Two Numbers',
+        difficulty: 'easy',
+        key: 'Euclid\'s formula: gcd(a, b) = gcd(b, a % b) until b is 0. And lcm(a, b) = a*b / gcd(a, b) — always true.',
+        code: `def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\n\ndef lcm(a, b):\n    return a * b // gcd(a, b)\n\nprint(f"GCD: {gcd(48, 18)}, LCM: {lcm(48, 18)}")`,
+        output: `GCD: 6, LCM: 144`
+    }, {
+        name: 'Reverse a Number / Sum of Digits',
+        difficulty: 'easy',
+        key: 'Peel off the last digit with % 10, build the reversed number, then shrink with // 10. Repeat until 0.',
+        code: `def reverse_and_sum(n):\n    reversed_num, digit_sum = 0, 0\n    original = n\n    while n > 0:\n        digit = n % 10\n        reversed_num = reversed_num * 10 + digit\n        digit_sum += digit\n        n //= 10\n    return reversed_num, digit_sum\n\nrev, total = reverse_and_sum(12345)\nprint(f"Reversed: {rev}, Digit sum: {total}")`,
+        output: `Reversed: 54321, Digit sum: 15`
+    }, {
+        name: 'Armstrong Number Check',
+        difficulty: 'medium',
+        key: 'A number equals the sum of its own digits each raised to the power of the digit count — e.g. 153 = 1³+5³+3³.',
+        code: `def is_armstrong(n):\n    digits = str(n)\n    power = len(digits)\n    total = sum(int(d) ** power for d in digits)\n    return total == n\n\nfor n in [153, 9474, 100]:\n    print(f"{n}: {is_armstrong(n)}")`,
+        output: `153: True\n9474: True\n100: False`
+    }, {
+        name: 'Leap Year Check',
+        difficulty: 'easy',
+        key: 'Divisible by 4 AND (not divisible by 100 OR divisible by 400) — the "century rule" is the part everyone forgets.',
+        code: `def is_leap_year(year):\n    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)\n\nfor y in [2000, 1900, 2024, 2023]:\n    print(f"{y}: {is_leap_year(y)}")`,
+        output: `2000: True\n1900: False\n2024: True\n2023: False`
+    }]
+}, {
+    category: 'Strings',
+    icon: '🔤',
+    programs: [{
+        name: 'Reverse a String',
+        difficulty: 'easy',
+        key: 'Slice notation [::-1] walks the sequence backward with step -1 — works on any sequence, not just strings.',
+        code: `text = "Da Vinci Resolution"\nreversed_text = text[::-1]\nprint(reversed_text)`,
+        output: `noituloseR icniV aD`
+    }, {
+        name: 'Palindrome String Check',
+        difficulty: 'easy',
+        key: 'A palindrome reads the same forwards and backwards: compare the string to its own reverse, ignoring case/spaces.',
+        code: `def is_palindrome(s):\n    cleaned = s.lower().replace(" ", "")\n    return cleaned == cleaned[::-1]\n\nfor s in ["Was it a car or a cat I saw", "Python"]:\n    print(f"{s!r}: {is_palindrome(s)}")`,
+        output: `'Was it a car or a cat I saw': True\n'Python': False`
+    }, {
+        name: 'Count Vowels & Consonants',
+        difficulty: 'easy',
+        key: 'A generator expression with sum() + a membership test (in "aeiou") replaces a manual counting loop.',
+        code: `def count_vowels(s):\n    vowels = set("aeiouAEIOU")\n    v = sum(1 for ch in s if ch in vowels)\n    c = sum(1 for ch in s if ch.isalpha() and ch not in vowels)\n    return v, c\n\nv, c = count_vowels("Data Science Robotics Lab")\nprint(f"Vowels: {v}, Consonants: {c}")`,
+        output: `Vowels: 8, Consonants: 15`
+    }, {
+        name: 'Anagram Check',
+        difficulty: 'easy',
+        key: 'Two words are anagrams if sorting their letters produces identical sequences — sorted(a) == sorted(b).',
+        code: `def is_anagram(a, b):\n    a, b = a.lower().replace(" ", ""), b.lower().replace(" ", "")\n    return sorted(a) == sorted(b)\n\nprint(is_anagram("listen", "silent"))\nprint(is_anagram("data", "science"))`,
+        output: `True\nFalse`
+    }, {
+        name: 'Word Frequency Counter',
+        difficulty: 'medium',
+        key: 'collections.Counter turns a list of words into a {word: count} map in one line — no manual dict bookkeeping.',
+        code: `from collections import Counter\n\ntext = "data science is fun data science is powerful"\nword_counts = Counter(text.split())\nprint(word_counts.most_common(2))`,
+        output: `[('data', 2), ('science', 2)]`
+    }, {
+        name: 'Remove Duplicate Characters (preserve order)',
+        difficulty: 'medium',
+        key: 'A set tracks "seen" characters in O(1) lookups while a list comprehension preserves the original order.',
+        code: `def remove_duplicates(s):\n    seen = set()\n    result = []\n    for ch in s:\n        if ch not in seen:\n            seen.add(ch)\n            result.append(ch)\n    return "".join(result)\n\nprint(remove_duplicates("programming"))`,
+        output: `progamin`
+    }, {
+        name: 'Title-Case / Capitalize Each Word',
+        difficulty: 'easy',
+        key: 'str.title() capitalizes every word boundary at once — faster and clearer than a manual split+capitalize loop.',
+        code: `sentence = "the quick brown fox jumps over the lazy dog"\nprint(sentence.title())`,
+        output: `The Quick Brown Fox Jumps Over The Lazy Dog`
+    }]
+}, {
+    category: 'Lists & Arrays',
+    icon: '📋',
+    programs: [{
+        name: 'Find Max / Min Without Built-ins',
+        difficulty: 'easy',
+        key: 'Seed both trackers with the first element, then scan once — O(n), one pass, no sorting needed.',
+        code: `def find_max_min(nums):\n    max_val = min_val = nums[0]\n    for n in nums[1:]:\n        if n > max_val:\n            max_val = n\n        if n < min_val:\n            min_val = n\n    return max_val, min_val\n\nprint(find_max_min([4, 2, 9, 1, 7]))`,
+        output: `(9, 1)`
+    }, {
+        name: 'Second Largest Element',
+        difficulty: 'medium',
+        key: 'Track the largest and second-largest together in one pass: when a new max appears, the old max demotes to second.',
+        code: `def second_largest(nums):\n    first = second = float('-inf')\n    for n in nums:\n        if n > first:\n            first, second = n, first\n        elif first > n > second:\n            second = n\n    return second\n\nprint(second_largest([10, 5, 20, 8, 20, 15]))`,
+        output: `15`
+    }, {
+        name: 'Linear Search',
+        difficulty: 'easy',
+        key: 'Scan every element once; the only "formula" is to stop and return the index the instant you find a match.',
+        code: `def linear_search(nums, target):\n    for i, n in enumerate(nums):\n        if n == target:\n            return i\n    return -1\n\nprint(linear_search([8, 3, 11, 6, 2], 6))`,
+        output: `3`
+    }, {
+        name: 'Binary Search (sorted list)',
+        difficulty: 'medium',
+        key: 'Only works on sorted data. Compare the middle element; the answer can only be in the half that "agrees" with it — halving the search space every step (O(log n)).',
+        code: `def binary_search(nums, target):\n    low, high = 0, len(nums) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nprint(binary_search([1, 3, 5, 7, 9, 11, 13], 9))`,
+        output: `4`
+    }, {
+        name: 'Bubble Sort',
+        difficulty: 'easy',
+        key: 'Repeatedly swap adjacent out-of-order pairs; each full pass "bubbles" the largest remaining value to the end.',
+        code: `def bubble_sort(nums):\n    n = len(nums)\n    for i in range(n):\n        for j in range(0, n - i - 1):\n            if nums[j] > nums[j + 1]:\n                nums[j], nums[j + 1] = nums[j + 1], nums[j]\n    return nums\n\nprint(bubble_sort([5, 1, 4, 2, 8]))`,
+        output: `[1, 2, 4, 5, 8]`
+    }, {
+        name: 'Remove Duplicates from a List',
+        difficulty: 'easy',
+        key: 'dict.fromkeys(list) drops duplicates AND preserves order (sets don\'t) — a one-line trick worth memorizing.',
+        code: `nums = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]\nunique = list(dict.fromkeys(nums))\nprint(unique)`,
+        output: `[3, 1, 4, 5, 9, 2, 6]`
+    }, {
+        name: 'Find the Missing Number (1 to N)',
+        difficulty: 'medium',
+        key: 'The sum of 1..N has a closed-form formula: N*(N+1)/2. Subtract the actual sum from that — whatever\'s left is the gap.',
+        code: `def find_missing(nums, n):\n    expected_sum = n * (n + 1) // 2\n    return expected_sum - sum(nums)\n\n# 1..8 with 5 missing\nprint(find_missing([1, 2, 3, 4, 6, 7, 8], 8))`,
+        output: `5`
+    }, {
+        name: 'Two Sum (pairs adding to a target)',
+        difficulty: 'medium',
+        key: 'A hash map turns "have I seen target - x before?" into an O(1) lookup, dropping the brute-force O(n²) to O(n).',
+        code: `def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        complement = target - n\n        if complement in seen:\n            return (seen[complement], i)\n        seen[n] = i\n    return None\n\nprint(two_sum([2, 7, 11, 15], 9))`,
+        output: `(0, 1)`
+    }]
+}, {
+    category: 'Patterns & Logic',
+    icon: '🎯',
+    programs: [{
+        name: 'FizzBuzz',
+        difficulty: 'easy',
+        key: 'Check the most specific rule first (divisible by both 3 AND 5) before the broader ones — order of conditions matters.',
+        code: `for i in range(1, 16):\n    if i % 15 == 0:\n        print("FizzBuzz")\n    elif i % 3 == 0:\n        print("Fizz")\n    elif i % 5 == 0:\n        print("Buzz")\n    else:\n        print(i)`,
+        output: `1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz`
+    }, {
+        name: 'Right Triangle / Pyramid Pattern',
+        difficulty: 'easy',
+        key: 'Nest a nice round number of stars per row equal to the row index — the outer loop picks the row, the inner loop draws it.',
+        code: `rows = 5\nfor i in range(1, rows + 1):\n    print("*" * i)`,
+        output: `*\n**\n***\n****\n*****`
+    }, {
+        name: "Pascal's Triangle",
+        difficulty: 'medium',
+        key: 'Every number is the sum of the two numbers above it. Build each row from the previous one instead of recomputing factorials.',
+        code: `def pascals_triangle(rows):\n    triangle = [[1]]\n    for i in range(1, rows):\n        prev = triangle[-1]\n        row = [1] + [prev[j] + prev[j + 1] for j in range(len(prev) - 1)] + [1]\n        triangle.append(row)\n    return triangle\n\nfor row in pascals_triangle(5):\n    print(row)`,
+        output: `[1]\n[1, 1]\n[1, 2, 1]\n[1, 3, 3, 1]\n[1, 4, 6, 4, 1]`
+    }]
+}, {
+    category: 'Recursion & Data Structures',
+    icon: '🌀',
+    programs: [{
+        name: 'Factorial (recursive)',
+        difficulty: 'easy',
+        key: 'Every recursive formula needs a base case (stop condition) and a step that reduces toward it: n! = n × (n-1)!.',
+        code: `def factorial(n):\n    if n <= 1:        # base case\n        return 1\n    return n * factorial(n - 1)   # reduces toward the base case\n\nprint(factorial(5))`,
+        output: `120`
+    }, {
+        name: 'Fibonacci (recursive + memoization)',
+        difficulty: 'medium',
+        key: 'Plain recursion re-solves the same sub-problems exponentially many times. @lru_cache memoizes results, dropping it to O(n).',
+        code: `from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint([fib(i) for i in range(10)])`,
+        output: `[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`
+    }, {
+        name: 'Binary Search (recursive)',
+        difficulty: 'medium',
+        key: 'Same halving idea as iterative binary search, but the "loop" is expressed as the function calling a smaller version of itself.',
+        code: `def binary_search(nums, target, low=0, high=None):\n    if high is None:\n        high = len(nums) - 1\n    if low > high:\n        return -1\n    mid = (low + high) // 2\n    if nums[mid] == target:\n        return mid\n    elif nums[mid] < target:\n        return binary_search(nums, target, mid + 1, high)\n    else:\n        return binary_search(nums, target, low, mid - 1)\n\nprint(binary_search([1, 3, 5, 7, 9, 11], 11))`,
+        output: `5`
+    }, {
+        name: 'Stack & Queue (using a plain list)',
+        difficulty: 'easy',
+        key: 'Stack = Last-In-First-Out: append()/pop() at the same end. Queue = First-In-First-Out: append() one end, pop(0) the other (or use deque for O(1)).',
+        code: `# Stack (LIFO)\nstack = []\nstack.append(1); stack.append(2); stack.append(3)\nprint("Stack pop:", stack.pop())   # 3 — last one in, first one out\n\n# Queue (FIFO) — use deque for O(1) instead of list.pop(0)\nfrom collections import deque\nqueue = deque()\nqueue.append(1); queue.append(2); queue.append(3)\nprint("Queue popleft:", queue.popleft())   # 1 — first one in, first one out`,
+        output: `Stack pop: 3\nQueue popleft: 1`
+    }, {
+        name: 'Reverse a Linked List (conceptual)',
+        difficulty: 'hard',
+        key: 'Walk the list once, flipping each node\'s "next" pointer to point backward instead of forward — three pointers (prev, curr, next) is the formula.',
+        code: `class Node:\n    def __init__(self, value, next=None):\n        self.value, self.next = value, next\n\ndef reverse_linked_list(head):\n    prev = None\n    curr = head\n    while curr:\n        next_node = curr.next   # save before we overwrite it\n        curr.next = prev        # flip the pointer\n        prev = curr\n        curr = next_node\n    return prev   # new head\n\n# Build 1 -> 2 -> 3, then reverse it\nhead = Node(1, Node(2, Node(3)))\nnew_head = reverse_linked_list(head)\nvals = []\nwhile new_head:\n    vals.append(new_head.value)\n    new_head = new_head.next\nprint(vals)`,
+        output: `[3, 2, 1]`
+    }]
+}];
+
+const TOTAL_PY_PROGRAMS = PY_FORMULAS_DATA.reduce((acc, c) => acc + c.programs.length, 0);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  STATE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -458,6 +673,13 @@ let syllabusState = {
     query: '',
     filter: 'all', // all | done | remaining | easy | medium | hard
     expandedLevels: new Set([0]), // level indices currently expanded
+};
+
+// python "key programs" UI state (search / expand / code visibility)
+let pyFormulaState = {
+    query: '',
+    expandedCategories: new Set([0]),
+    openCode: new Set(), // keys "categoryIndex-programIndex" currently showing code
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1021,6 +1243,80 @@ const views = {
                 </div>
               </div>
             `;
+    },
+
+    // ─── PYTHON KEY PROGRAMS ("FORMULAS") ──────────────
+    pyformulas() {
+        let html = `
+              <div class="card full">
+                <h2>🐍 Python Key Programs <span class="sub">— memorize these like the quadratic formula</span></h2>
+                <p style="font-size:0.85rem;color:#b0c4e0;line-height:1.7;margin-bottom:0.6rem;">
+                  Just like <code style="background:#0f1a2e;padding:0.1rem 0.4rem;border-radius:4px;">x = (-b ± √(b²-4ac)) / 2a</code>
+                  solves every quadratic equation, each program below is a fixed, reusable pattern that solves
+                  an entire class of problems. Learn the <strong style="color:#60a5fa;">🔑 key idea</strong> first — the code
+                  follows naturally once the pattern clicks.
+                </p>
+                <div class="syllabus-toolbar">
+                  <div class="syllabus-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="pyFormulaSearchInput" placeholder="Search programs…" value="${escapeHtml(pyFormulaState.query)}" aria-label="Search Python programs" />
+                  </div>
+                  <div class="expand-controls">
+                    <button id="pyExpandAllBtn">⊕ Expand all</button>
+                    <button id="pyCollapseAllBtn">⊖ Collapse all</button>
+                  </div>
+                </div>
+              </div>
+            `;
+
+        let anyVisible = false;
+
+        PY_FORMULAS_DATA.forEach((cat, ci) => {
+            const filteredPrograms = cat.programs
+                .map((p, pi) => ({ ...p, pi }))
+                .filter(p => !pyFormulaState.query || p.name.toLowerCase().includes(pyFormulaState.query.toLowerCase()) || p.key.toLowerCase().includes(pyFormulaState.query.toLowerCase()));
+
+            if (filteredPrograms.length === 0) return;
+            anyVisible = true;
+
+            const isOpen = pyFormulaState.expandedCategories.has(ci);
+            html += `
+                <div class="card syllabus-level">
+                  <div class="level-title" data-pycat="${ci}">
+                    <span>${cat.icon}</span>
+                    <span class="level-name">${cat.category}</span>
+                    <span class="count">${cat.programs.length} programs</span>
+                    <span class="arrow ${isOpen ? 'open' : ''}" style="margin-left:auto;">▶</span>
+                  </div>
+                  <div class="topic-list ${isOpen ? 'open' : ''}" data-pycat="${ci}">
+                    ${filteredPrograms.map(p => {
+            const codeKey = `${ci}-${p.pi}`;
+            const codeOpen = pyFormulaState.openCode.has(codeKey);
+            return `
+                      <div class="formula-card">
+                        <div class="formula-header" data-pycat="${ci}" data-pyprog="${p.pi}">
+                          <span class="topic-difficulty ${getDifficultyClass(p.difficulty)}">${p.difficulty}</span>
+                          <span class="formula-name">${p.name}</span>
+                          <button class="formula-toggle-btn" data-pycat="${ci}" data-pyprog="${p.pi}">${codeOpen ? '▲ Hide code' : '▼ Show code'}</button>
+                        </div>
+                        <div class="formula-key">🔑 ${p.key}</div>
+                        <div class="formula-code-wrap ${codeOpen ? 'open' : ''}">
+                          <div class="code-block">${highlightCode(p.code)}</div>
+                          <div class="lab-output" style="margin-top:0.5rem;"><span style="color:#6b8aa8;">Output:</span><br>${escapeHtml(p.output).split('\n').join('<br>')}</div>
+                        </div>
+                      </div>
+                    `;
+        }).join('')}
+                  </div>
+                </div>
+              `;
+        });
+
+        if (!anyVisible) {
+            html += `<div class="card full"><div class="no-results">🔎 No programs match your search. Try a different term.</div></div>`;
+        }
+
+        return html;
     }
 };
 
@@ -1060,6 +1356,7 @@ function renderView(viewName) {
         if (viewName === 'lab') initLab();
         if (viewName === 'timer') initTimer();
         if (viewName === 'knowledge') initKnowledge();
+        if (viewName === 'pyformulas') initPyFormulas();
     }, 50);
 }
 
@@ -1697,6 +1994,77 @@ function initKnowledge() {
             }
         });
     }
+}
+
+// ─── PYTHON KEY PROGRAMS ───────────────────────────────
+
+function initPyFormulas() {
+    const searchInput = document.getElementById('pyFormulaSearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            pyFormulaState.query = e.target.value;
+            if (pyFormulaState.query) {
+                PY_FORMULAS_DATA.forEach((cat, ci) => {
+                    const hasMatch = cat.programs.some(p =>
+                        p.name.toLowerCase().includes(pyFormulaState.query.toLowerCase()) ||
+                        p.key.toLowerCase().includes(pyFormulaState.query.toLowerCase()));
+                    if (hasMatch) pyFormulaState.expandedCategories.add(ci);
+                });
+            }
+            renderView('pyformulas');
+            setTimeout(() => {
+                const input = document.getElementById('pyFormulaSearchInput');
+                if (input) {
+                    input.focus();
+                    input.setSelectionRange(input.value.length, input.value.length);
+                }
+            }, 0);
+        });
+    }
+
+    const expandAllBtn = document.getElementById('pyExpandAllBtn');
+    const collapseAllBtn = document.getElementById('pyCollapseAllBtn');
+    if (expandAllBtn) {
+        expandAllBtn.addEventListener('click', () => {
+            PY_FORMULAS_DATA.forEach((_, ci) => pyFormulaState.expandedCategories.add(ci));
+            renderView('pyformulas');
+        });
+    }
+    if (collapseAllBtn) {
+        collapseAllBtn.addEventListener('click', () => {
+            pyFormulaState.expandedCategories.clear();
+            renderView('pyformulas');
+        });
+    }
+
+    document.querySelectorAll('.level-title[data-pycat]').forEach(el => {
+        el.addEventListener('click', () => {
+            const ci = parseInt(el.dataset.pycat);
+            if (pyFormulaState.expandedCategories.has(ci)) pyFormulaState.expandedCategories.delete(ci);
+            else pyFormulaState.expandedCategories.add(ci);
+            renderView('pyformulas');
+        });
+    });
+
+    const toggleCode = (ci, pi) => {
+        const key = `${ci}-${pi}`;
+        if (pyFormulaState.openCode.has(key)) pyFormulaState.openCode.delete(key);
+        else pyFormulaState.openCode.add(key);
+        renderView('pyformulas');
+    };
+
+    document.querySelectorAll('.formula-toggle-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleCode(parseInt(btn.dataset.pycat), parseInt(btn.dataset.pyprog));
+        });
+    });
+
+    document.querySelectorAll('.formula-header').forEach(el => {
+        el.addEventListener('click', () => {
+            toggleCode(parseInt(el.dataset.pycat), parseInt(el.dataset.pyprog));
+        });
+    });
 }
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
