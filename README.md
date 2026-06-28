@@ -1,61 +1,78 @@
 # Data Science Robotics Lab — Compound Learning Dashboard
 
 A single-folder, no-build-step vanilla HTML/CSS/JS dashboard for mastering
-data science end to end — aligned to the official **IBM Data Science
-Professional Certificate** (Coursera, 12-course series), now with a
-**Python Key Programs** reference built in.
+Python and data science end to end — aligned to the official **IBM Data
+Science Professional Certificate**, with a full **Python Key Programs**
+reference and revision-checklist system built in.
 
 ## Run it
 Open `index.html` directly in a browser — no server or build step required.
 
-## What's inside
+## 🐍 Python Key Programs — now 82 programs across 16 categories
 
-### 🐍 Python Key Programs (new)
-A "formula sheet" for Python — the same way `x = (-b ± √(b²-4ac)) / 2a` solves
-every quadratic equation, each program here is a fixed, reusable pattern that
-solves a whole class of problems. 31 programs across 5 categories:
-- **Numbers** — factorial, Fibonacci, prime check, GCD/LCM, Armstrong number, leap year, swap without temp, etc.
-- **Strings** — reverse, palindrome check, anagram check, word frequency, vowel count, etc.
-- **Lists & Arrays** — linear/binary search, bubble sort, second largest, Two Sum, missing number, etc.
-- **Patterns & Logic** — FizzBuzz, pyramid pattern, Pascal's Triangle.
-- **Recursion & Data Structures** — recursive factorial/Fibonacci (with memoization), recursive binary search, stack/queue, reversing a linked list.
+Covers the full beginner → professional path:
 
-Each card leads with a **🔑 key idea** (the "formula" to remember) before the
-code — search across all programs, expand/collapse by category, and toggle
-each program's code + expected output independently.
+**Language fundamentals**
+- Variables, Data Types & Type Casting
+- Input/Output & Operators (incl. conditionals, ternary, grading-system pattern)
+- Loops & Iteration (for/while, comprehensions, enumerate, zip, generators)
+- Tuples, Sets & Dictionaries
+- Functions (*args/**kwargs, lambda, map/filter, closures, decorators)
+- File Handling (read/write/append, line-by-line, CSV)
+- Exception Handling (try/except/else/finally, custom exceptions, chaining)
+- Modules, Packages & Virtual Environments
 
-### Other sections
-- **Overview** — mastery stats, category progress, a "Compound Learning Curve" chart.
+**Object-Oriented Programming**
+- Classes & OOP — constructors, instance vs. class attributes, inheritance
+  + super(), polymorphism, encapsulation + @property, dunder methods,
+  @staticmethod/@classmethod, abstract base classes
+
+**Algorithms & professional practice**
+- Numbers, Strings, Lists & Arrays, Patterns & Logic, Recursion & Data
+  Structures (the original "interview formula" set)
+- Iterators & the iteration protocol (iter/next, custom iterators, itertools)
+- API Calls & Automation Scripts (GET/POST + JSON, file automation, the
+  task-vs-trigger pattern for scheduled scripts)
+
+**Two ways to use it:**
+- **📖 Study mode** — each card leads with a 🔑 key idea (the reusable
+  "formula"), then expands to show the code, expected output, a real-world
+  use case, and a common beginner mistake to avoid.
+- **📋 Revision checklist** — a compact, code-free list so you can test
+  yourself by recalling each key idea from memory before checking it off.
+  A ✅/⏳ progress count tracks how much you've reviewed.
+
+Search works across all 82 programs at once, and categories expand/collapse
+independently.
+
+## Everything else
+- **Overview** — mastery stats, a "Compound Learning Curve" chart.
 - **Syllabus** — 23 data-science topics mapped to the official IBM
   certificate courses (or flagged "Supplementary"), each with basic/advanced
-  definitions, basic/advanced runnable examples, 4 resources, and a compound
+  definitions, basic/advanced examples, 4 resources, and a compound
   prerequisite chain.
-- **Robotics Lab** — an in-browser notebook with quick experiment presets.
-- **Time Manager** — a focus/break Pomodoro-style timer with session logging.
-- **Knowledge Map** — a connected view of every data-science topic.
+- **Robotics Lab**, **Time Manager**, **Knowledge Map** — runnable-code
+  sandbox, focus timer, connected topic map.
 
 ## Responsive behavior
-- **Desktop (>1024px):** full fixed sidebar + 2–4 column grids.
-- **Tablet (768–1024px):** narrower sidebar, grids collapse to 1–2 columns.
-- **Mobile (<768px):** sidebar becomes a slide-in drawer (hamburger +
-  backdrop), a sticky top bar replaces the desktop header, and a bottom tab
-  bar (now 6 sections) gives one-thumb navigation.
+Desktop: full sidebar + multi-column grids. Tablet: narrower sidebar,
+1–2 column grids. Mobile (<768px): drawer sidebar (hamburger + backdrop),
+sticky top bar, and a 6-tab bottom nav bar for one-thumb navigation.
 
 ## Files
 ```
 index.html       — structure (mobile topbar, drawer sidebar, 6-tab bottom bar, modal)
-css/styles.css   — styling: syllabus + Python-formula cards, tabs, chain-strip, responsive
-js/script.js     — SYLLABUS_DATA (23 topics) + PY_FORMULAS_DATA (31 programs),
-                   view rendering, charts, timer, lab logic, modal tabs
+css/styles.css   — styling: syllabus + Python-formula cards, study/checklist
+                   modes, tabs, chain-strip, responsive breakpoints
+js/script.js     — SYLLABUS_DATA (23 topics) + PY_FORMULAS_DATA (82 programs,
+                   16 categories), view rendering, charts, timer, lab logic
 ```
 
 ## Customizing
-- Edit `SYLLABUS_DATA` for data-science topics (see prior notes on
-  `definition`, `example`/`advancedExample`, `prerequisites`, `ibmCourse`,
-  `resources`).
-- Edit `PY_FORMULAS_DATA` for Python programs. Each entry under a category's
-  `programs` array supports: `name`, `difficulty`, `key` (the one-line
-  takeaway), `code` (runnable example), `output` (expected printed output,
-  use `\n` for multiple lines).
-- Color tokens (dark navy + blue/purple accent) live as hex values
-  throughout `css/styles.css` — search for `#60a5fa` / `#8b5cf6` to retheme.
+Each program in `PY_FORMULAS_DATA` supports: `name`, `difficulty`,
+`mastered` (revision tracking), `key` (the one-line takeaway), `code`,
+`output`, and optionally `realWorld` / `mistake` / `explanation` / `practice`
+for extra depth (rendered automatically in Study mode when present).
+
+Color tokens (dark navy + blue/purple accent) live as hex values throughout
+`css/styles.css` — search for `#60a5fa` / `#8b5cf6` to retheme.

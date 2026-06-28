@@ -708,8 +708,49 @@ body {
 }
 
 .formula-code-wrap.open {
-    max-height: 2000px;
+    max-height: 4000px;
     margin-top: 0.6rem;
+}
+
+.formula-extras {
+    margin-top: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.formula-extra-row {
+    background: rgba(11, 20, 40, 0.6);
+    border: 1px solid #1a2d4a;
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+}
+
+.formula-extra-row p {
+    margin-top: 0.25rem;
+    font-size: 0.8rem;
+    color: #c8d6e8;
+    line-height: 1.55;
+}
+
+.formula-extra-tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #93bbfc;
+}
+
+.formula-extra-tag.real {
+    color: #4ade80;
+}
+
+.formula-extra-tag.warn {
+    color: #fbbf24;
+}
+
+.formula-extra-tag.practice {
+    color: #f472b6;
 }
 
 /* ─── SYLLABUS ─── */

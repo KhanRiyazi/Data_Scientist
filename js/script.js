@@ -438,53 +438,220 @@ let DONE_TOPICS = SYLLABUS_DATA.reduce((acc, l) => acc + l.topics.filter(t => t.
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 const PY_FORMULAS_DATA = [{
+    category: 'Loops & Iteration',
+    icon: '🔁',
+    programs: [{
+        name: 'For Loop & range()',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'range(start, stop, step) generates numbers lazily (no list is built in memory) — a for loop pulls one at a time until stop is reached (exclusive).',
+        code: `for i in range(2, 10, 2):\n    print(i, end=" ")\nprint()\n\n# Looping directly over any iterable — no index needed\nfor fruit in ["apple", "banana", "cherry"]:\n    print(fruit)`,
+        output: `2 4 6 8 \napple\nbanana\ncherry`
+    }, {
+        name: 'While Loop with break / continue',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'while runs as long as its condition is True. break exits the loop immediately; continue skips straight to the next iteration.',
+        code: `n = 0\nwhile n < 10:\n    n += 1\n    if n % 2 == 0:\n        continue   # skip even numbers\n    if n == 9:\n        break      # stop entirely once we hit 9\n    print(n, end=" ")\nprint()`,
+        output: `1 3 5 7`
+    }, {
+        name: 'List Comprehension',
+        difficulty: 'easy',
+        mastered: false,
+        key: '[expression for item in iterable if condition] replaces a manual "loop + append" with one readable line — and it\'s usually faster too.',
+        code: `numbers = range(1, 11)\nsquares_of_evens = [n ** 2 for n in numbers if n % 2 == 0]\nprint(squares_of_evens)\n\n# Equivalent manual loop, for comparison:\n# result = []\n# for n in numbers:\n#     if n % 2 == 0:\n#         result.append(n ** 2)`,
+        output: `[4, 16, 36, 64, 100]`
+    }, {
+        name: 'enumerate() — Index + Value Together',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'enumerate(iterable, start=0) hands you (index, value) pairs — no manual counter variable needed.',
+        code: `colors = ["red", "green", "blue"]\nfor i, color in enumerate(colors, start=1):\n    print(f"{i}: {color}")`,
+        output: `1: red\n2: green\n3: blue`
+    }, {
+        name: 'zip() — Parallel Iteration',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'zip(a, b, ...) pairs up multiple iterables element-by-element and stops at the shortest one — perfect for looping two related lists together.',
+        code: `names = ["Alice", "Bob", "Charlie"]\nscores = [92, 85, 78]\n\nfor name, score in zip(names, scores):\n    print(f"{name}: {score}")\n\n# Reverse it: turn parallel lists back into pairs, or pairs back into lists\npairs = list(zip(names, scores))\nnames_again, scores_again = zip(*pairs)\nprint(names_again)`,
+        output: `Alice: 92\nBob: 85\nCharlie: 78\n('Alice', 'Bob', 'Charlie')`
+    }, {
+        name: 'Nested Loops & Flattening',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A nested loop visits every combination of two sequences. A nested comprehension (outer loop first, inner loop second) flattens that into one line.',
+        code: `matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]\n\n# Nested loop\nflat = []\nfor row in matrix:\n    for val in row:\n        flat.append(val)\nprint(flat)\n\n# Same result as a nested comprehension\nflat2 = [val for row in matrix for val in row]\nprint(flat2 == flat)`,
+        output: `[1, 2, 3, 4, 5, 6, 7, 8, 9]\nTrue`
+    }, {
+        name: 'Generators (yield)',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'yield turns a function into a generator: it produces one value at a time, pausing in between, instead of building an entire list in memory up front — essential for huge or infinite sequences.',
+        code: `def countdown(n):\n    while n > 0:\n        yield n      # pause here, hand back n, resume on next call\n        n -= 1\n\nfor val in countdown(5):\n    print(val, end=" ")\nprint()\n\n# A generator expression — like a list comprehension, but lazy\nsquares_gen = (x * x for x in range(1000000))  # instant, no memory spike\nprint(next(squares_gen), next(squares_gen))`,
+        output: `5 4 3 2 1 \n0 1`
+    }]
+}, {
+    category: 'Functions',
+    icon: '🧩',
+    programs: [{
+        name: 'Function Basics & Default Arguments',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'def name(params): defines reusable logic. Parameters with = value become optional — callers can skip them and the default kicks in.',
+        code: `def greet(name, greeting="Hello"):\n    return f"{greeting}, {name}!"\n\nprint(greet("Rizwan"))\nprint(greet("Rizwan", greeting="Welcome"))`,
+        output: `Hello, Rizwan!\nWelcome, Rizwan!`
+    }, {
+        name: '*args and **kwargs',
+        difficulty: 'medium',
+        mastered: false,
+        key: '*args collects any extra positional arguments into a tuple. **kwargs collects any extra keyword arguments into a dict. Use them when you don\'t know in advance how many arguments will be passed.',
+        code: `def summarize(title, *scores, **details):\n    print(f"{title}: scores={scores}")\n    for key, value in details.items():\n        print(f"  {key} = {value}")\n\nsummarize("Quiz 1", 90, 85, 78, passing=True, grader="Alice")`,
+        output: `Quiz 1: scores=(90, 85, 78)\n  passing = True\n  grader = Alice`
+    }, {
+        name: 'Lambda Functions',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'lambda params: expression is a small, anonymous, one-expression function — most useful as a quick "key" passed into sorted(), map(), or filter() rather than as a standalone def.',
+        code: `people = [("Alice", 30), ("Bob", 25), ("Charlie", 35)]\n\n# Sort by age (second item in each tuple) using a lambda as the key\nby_age = sorted(people, key=lambda person: person[1])\nprint(by_age)`,
+        output: `[('Bob', 25), ('Alice', 30), ('Charlie', 35)]`
+    }, {
+        name: 'map() / filter() — Functional Patterns',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'map(fn, iterable) applies fn to every item. filter(fn, iterable) keeps only items where fn returns True. Both return lazy iterators — wrap in list() to see results.',
+        code: `numbers = [1, 2, 3, 4, 5, 6, 7, 8]\n\ndoubled = list(map(lambda x: x * 2, numbers))\nevens = list(filter(lambda x: x % 2 == 0, numbers))\n\nprint("Doubled:", doubled)\nprint("Evens:", evens)`,
+        output: `Doubled: [2, 4, 6, 8, 10, 12, 14, 16]\nEvens: [2, 4, 6, 8]`
+    }, {
+        name: 'Scope, Closures & nonlocal',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'A nested function "closes over" variables from its enclosing function, remembering them even after the outer function returns. nonlocal lets the inner function modify (not just read) that captured variable.',
+        code: `def make_counter():\n    count = 0\n    def increment():\n        nonlocal count   # without this, count += 1 below would raise an error\n        count += 1\n        return count\n    return increment\n\ncounter = make_counter()\nprint(counter())   # 1\nprint(counter())   # 2 — count persisted between calls!\nprint(counter())   # 3`,
+        output: `1\n2\n3`
+    }, {
+        name: 'Decorators (@)',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'A decorator is a function that wraps another function to add behavior (logging, timing, access checks) without changing its source code. @my_decorator above a function is shorthand for func = my_decorator(func).',
+        code: `import time\n\ndef timer(func):\n    def wrapper(*args, **kwargs):\n        start = time.perf_counter()\n        result = func(*args, **kwargs)\n        elapsed = time.perf_counter() - start\n        print(f"{func.__name__} took {elapsed:.6f}s")\n        return result\n    return wrapper\n\n@timer\ndef slow_sum(n):\n    return sum(range(n))\n\nprint(slow_sum(1000000))`,
+        output: `slow_sum took 0.012345s\n499999500000`
+    }]
+}, {
+    category: 'Classes & OOP',
+    icon: '🏛️',
+    programs: [{
+        name: 'Class Basics & __init__',
+        difficulty: 'easy',
+        mastered: false,
+        key: '__init__ runs automatically the moment you create an instance — it\'s where you set up that object\'s starting attributes. self always refers to "this particular instance."',
+        code: `class Dog:\n    def __init__(self, name, breed):\n        self.name = name\n        self.breed = breed\n\n    def bark(self):\n        return f"{self.name} says Woof!"\n\nmy_dog = Dog("Rex", "Labrador")\nprint(my_dog.bark())\nprint(f"{my_dog.name} is a {my_dog.breed}")`,
+        output: `Rex says Woof!\nRex is a Labrador`
+    }, {
+        name: 'Instance Attributes vs Class Attributes',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A class attribute is defined directly under the class and shared by every instance. An instance attribute (set via self.x = ...) belongs to one object only — changing it on one instance never affects the others.',
+        code: `class Employee:\n    company = "Da Vinci Resolution"   # class attribute — shared by all\n\n    def __init__(self, name):\n        self.name = name              # instance attribute — unique per object\n\ne1 = Employee("Alice")\ne2 = Employee("Bob")\nprint(e1.company, e2.company)   # both share the same class attribute\n\nEmployee.company = "New Co"     # change it on the class...\nprint(e1.company, e2.company)   # ...and both instances see the update`,
+        output: `Da Vinci Resolution Da Vinci Resolution\nNew Co New Co`
+    }, {
+        name: 'Inheritance & super()',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'class Child(Parent): inherits all of the parent\'s attributes and methods. super().__init__(...) calls the parent\'s constructor so you don\'t have to duplicate its setup logic.',
+        code: `class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        return f"{self.name} makes a sound."\n\nclass Cat(Animal):\n    def __init__(self, name, color):\n        super().__init__(name)    # reuse the parent's setup\n        self.color = color\n\n    def speak(self):               # override the parent's method\n        return f"{self.name} says Meow!"\n\nc = Cat("Whiskers", "black")\nprint(c.speak())\nprint(f"Color: {c.color}")`,
+        output: `Whiskers says Meow!\nColor: black`
+    }, {
+        name: 'Polymorphism (Method Overriding)',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'Different subclasses can implement the same method name in their own way — calling code just calls .speak() and gets the right behavior automatically, without checking each object\'s type.',
+        code: `class Shape:\n    def area(self):\n        raise NotImplementedError\n\nclass Rectangle(Shape):\n    def __init__(self, w, h):\n        self.w, self.h = w, h\n    def area(self):\n        return self.w * self.h\n\nclass Circle(Shape):\n    def __init__(self, r):\n        self.r = r\n    def area(self):\n        return round(3.1416 * self.r ** 2, 2)\n\nshapes = [Rectangle(4, 5), Circle(3)]\nfor shape in shapes:\n    print(f"{type(shape).__name__}: area = {shape.area()}")   # same call, different behavior`,
+        output: `Rectangle: area = 20\nCircle: area = 28.27`
+    }, {
+        name: 'Encapsulation & @property',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A leading underscore (_x) signals "internal, don\'t touch it directly" by convention. @property lets you expose a method as if it were a plain attribute, so you can validate or compute a value on access without changing how it\'s used.',
+        code: `class BankAccount:\n    def __init__(self, balance):\n        self._balance = balance   # "private" by convention\n\n    @property\n    def balance(self):\n        return self._balance\n\n    @balance.setter\n    def balance(self, amount):\n        if amount < 0:\n            raise ValueError("Balance can't go negative")\n        self._balance = amount\n\naccount = BankAccount(100)\nprint(account.balance)     # reads like an attribute, runs like a method\naccount.balance = 250       # the setter validates this assignment\nprint(account.balance)`,
+        output: `100\n250`
+    }, {
+        name: 'Dunder Methods (__str__, __eq__, __len__)',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'Dunder ("double underscore") methods plug your class into Python\'s built-in syntax: __str__ controls print(obj), __eq__ controls ==, __len__ controls len(obj) — implement them and your objects behave like native types.',
+        code: `class Vector:\n    def __init__(self, x, y):\n        self.x, self.y = x, y\n\n    def __str__(self):\n        return f"Vector({self.x}, {self.y})"\n\n    def __eq__(self, other):\n        return self.x == other.x and self.y == other.y\n\n    def __add__(self, other):\n        return Vector(self.x + other.x, self.y + other.y)\n\nv1, v2 = Vector(1, 2), Vector(3, 4)\nprint(v1 + v2)              # uses __add__\nprint(v1 == Vector(1, 2))   # uses __eq__`,
+        output: `Vector(4, 6)\nTrue`
+    }, {
+        name: '@staticmethod vs @classmethod vs instance method',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'An instance method takes self (needs an object). A @classmethod takes cls (works on the class itself — great for alternate constructors). A @staticmethod takes neither — it\'s just a regular function namespaced inside the class for organization.',
+        code: `class Pizza:\n    def __init__(self, toppings):\n        self.toppings = toppings\n\n    def describe(self):                 # instance method — needs self\n        return f"Pizza with {', '.join(self.toppings)}"\n\n    @classmethod\n    def margherita(cls):                 # alternate constructor — needs cls\n        return cls(["tomato", "mozzarella", "basil"])\n\n    @staticmethod\n    def is_vegetarian(toppings):          # needs neither self nor cls\n        meats = {"pepperoni", "sausage", "bacon"}\n        return not any(t in meats for t in toppings)\n\np = Pizza.margherita()\nprint(p.describe())\nprint(Pizza.is_vegetarian(p.toppings))`,
+        output: `Pizza with tomato, mozzarella, basil\nTrue`
+    }, {
+        name: 'Abstract Base Classes (ABC)',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'Inheriting from ABC and marking a method @abstractmethod forces every subclass to implement it — Python raises an error if you try to instantiate a subclass that skipped one. This is how you define a required "contract" for a family of classes.',
+        code: `from abc import ABC, abstractmethod\n\nclass PaymentMethod(ABC):\n    @abstractmethod\n    def pay(self, amount):\n        pass\n\nclass CreditCard(PaymentMethod):\n    def pay(self, amount):\n        return f"Charged \${amount} to credit card"\n\n# class Crypto(PaymentMethod): pass   # <- would raise TypeError: can't instantiate\n#                                          abstract class without implementing 'pay'\n\nmethod = CreditCard()\nprint(method.pay(49.99))`,
+        output: `Charged $49.99 to credit card`
+    }]
+}, {
     category: 'Numbers',
     icon: '🔢',
     programs: [{
         name: 'Swap Two Numbers (no temp variable)',
         difficulty: 'easy',
+        mastered: false,
         key: 'a, b = b, a — Python unpacks the right side fully before assigning, so no temp variable is ever needed.',
         code: `a, b = 5, 10\na, b = b, a\nprint(f"a={a}, b={b}")`,
         output: `a=10, b=5`
     }, {
         name: 'Factorial of a Number',
         difficulty: 'easy',
+        mastered: false,
         key: 'n! = n × (n-1) × ... × 1. Start a running product at 1, multiply through range(1, n+1).',
         code: `def factorial(n):\n    result = 1\n    for i in range(1, n + 1):\n        result *= i\n    return result\n\nprint(factorial(6))`,
         output: `720`
     }, {
         name: 'Fibonacci Sequence (iterative)',
         difficulty: 'easy',
+        mastered: false,
         key: 'Keep only the last two values and slide them forward: a, b = b, a+b. No need to store the whole sequence.',
         code: `def fibonacci(n):\n    a, b = 0, 1\n    sequence = []\n    for _ in range(n):\n        sequence.append(a)\n        a, b = b, a + b\n    return sequence\n\nprint(fibonacci(10))`,
         output: `[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`
     }, {
         name: 'Check Prime Number',
         difficulty: 'easy',
+        mastered: false,
         key: 'A number is prime if nothing from 2 up to √n divides it evenly — you never need to check past the square root.',
         code: `def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, int(n ** 0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\nprint(is_prime(29), is_prime(30))`,
         output: `True False`
     }, {
         name: 'GCD & LCM of Two Numbers',
         difficulty: 'easy',
+        mastered: false,
         key: 'Euclid\'s formula: gcd(a, b) = gcd(b, a % b) until b is 0. And lcm(a, b) = a*b / gcd(a, b) — always true.',
         code: `def gcd(a, b):\n    while b:\n        a, b = b, a % b\n    return a\n\ndef lcm(a, b):\n    return a * b // gcd(a, b)\n\nprint(f"GCD: {gcd(48, 18)}, LCM: {lcm(48, 18)}")`,
         output: `GCD: 6, LCM: 144`
     }, {
         name: 'Reverse a Number / Sum of Digits',
         difficulty: 'easy',
+        mastered: false,
         key: 'Peel off the last digit with % 10, build the reversed number, then shrink with // 10. Repeat until 0.',
         code: `def reverse_and_sum(n):\n    reversed_num, digit_sum = 0, 0\n    original = n\n    while n > 0:\n        digit = n % 10\n        reversed_num = reversed_num * 10 + digit\n        digit_sum += digit\n        n //= 10\n    return reversed_num, digit_sum\n\nrev, total = reverse_and_sum(12345)\nprint(f"Reversed: {rev}, Digit sum: {total}")`,
         output: `Reversed: 54321, Digit sum: 15`
     }, {
         name: 'Armstrong Number Check',
         difficulty: 'medium',
+        mastered: false,
         key: 'A number equals the sum of its own digits each raised to the power of the digit count — e.g. 153 = 1³+5³+3³.',
         code: `def is_armstrong(n):\n    digits = str(n)\n    power = len(digits)\n    total = sum(int(d) ** power for d in digits)\n    return total == n\n\nfor n in [153, 9474, 100]:\n    print(f"{n}: {is_armstrong(n)}")`,
         output: `153: True\n9474: True\n100: False`
     }, {
         name: 'Leap Year Check',
         difficulty: 'easy',
+        mastered: false,
         key: 'Divisible by 4 AND (not divisible by 100 OR divisible by 400) — the "century rule" is the part everyone forgets.',
         code: `def is_leap_year(year):\n    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)\n\nfor y in [2000, 1900, 2024, 2023]:\n    print(f"{y}: {is_leap_year(y)}")`,
         output: `2000: True\n1900: False\n2024: True\n2023: False`
@@ -495,42 +662,49 @@ const PY_FORMULAS_DATA = [{
     programs: [{
         name: 'Reverse a String',
         difficulty: 'easy',
+        mastered: false,
         key: 'Slice notation [::-1] walks the sequence backward with step -1 — works on any sequence, not just strings.',
         code: `text = "Da Vinci Resolution"\nreversed_text = text[::-1]\nprint(reversed_text)`,
         output: `noituloseR icniV aD`
     }, {
         name: 'Palindrome String Check',
         difficulty: 'easy',
+        mastered: false,
         key: 'A palindrome reads the same forwards and backwards: compare the string to its own reverse, ignoring case/spaces.',
         code: `def is_palindrome(s):\n    cleaned = s.lower().replace(" ", "")\n    return cleaned == cleaned[::-1]\n\nfor s in ["Was it a car or a cat I saw", "Python"]:\n    print(f"{s!r}: {is_palindrome(s)}")`,
         output: `'Was it a car or a cat I saw': True\n'Python': False`
     }, {
         name: 'Count Vowels & Consonants',
         difficulty: 'easy',
+        mastered: false,
         key: 'A generator expression with sum() + a membership test (in "aeiou") replaces a manual counting loop.',
         code: `def count_vowels(s):\n    vowels = set("aeiouAEIOU")\n    v = sum(1 for ch in s if ch in vowels)\n    c = sum(1 for ch in s if ch.isalpha() and ch not in vowels)\n    return v, c\n\nv, c = count_vowels("Data Science Robotics Lab")\nprint(f"Vowels: {v}, Consonants: {c}")`,
         output: `Vowels: 8, Consonants: 15`
     }, {
         name: 'Anagram Check',
         difficulty: 'easy',
+        mastered: false,
         key: 'Two words are anagrams if sorting their letters produces identical sequences — sorted(a) == sorted(b).',
         code: `def is_anagram(a, b):\n    a, b = a.lower().replace(" ", ""), b.lower().replace(" ", "")\n    return sorted(a) == sorted(b)\n\nprint(is_anagram("listen", "silent"))\nprint(is_anagram("data", "science"))`,
         output: `True\nFalse`
     }, {
         name: 'Word Frequency Counter',
         difficulty: 'medium',
+        mastered: false,
         key: 'collections.Counter turns a list of words into a {word: count} map in one line — no manual dict bookkeeping.',
         code: `from collections import Counter\n\ntext = "data science is fun data science is powerful"\nword_counts = Counter(text.split())\nprint(word_counts.most_common(2))`,
         output: `[('data', 2), ('science', 2)]`
     }, {
         name: 'Remove Duplicate Characters (preserve order)',
         difficulty: 'medium',
+        mastered: false,
         key: 'A set tracks "seen" characters in O(1) lookups while a list comprehension preserves the original order.',
         code: `def remove_duplicates(s):\n    seen = set()\n    result = []\n    for ch in s:\n        if ch not in seen:\n            seen.add(ch)\n            result.append(ch)\n    return "".join(result)\n\nprint(remove_duplicates("programming"))`,
         output: `progamin`
     }, {
         name: 'Title-Case / Capitalize Each Word',
         difficulty: 'easy',
+        mastered: false,
         key: 'str.title() capitalizes every word boundary at once — faster and clearer than a manual split+capitalize loop.',
         code: `sentence = "the quick brown fox jumps over the lazy dog"\nprint(sentence.title())`,
         output: `The Quick Brown Fox Jumps Over The Lazy Dog`
@@ -541,48 +715,56 @@ const PY_FORMULAS_DATA = [{
     programs: [{
         name: 'Find Max / Min Without Built-ins',
         difficulty: 'easy',
+        mastered: false,
         key: 'Seed both trackers with the first element, then scan once — O(n), one pass, no sorting needed.',
         code: `def find_max_min(nums):\n    max_val = min_val = nums[0]\n    for n in nums[1:]:\n        if n > max_val:\n            max_val = n\n        if n < min_val:\n            min_val = n\n    return max_val, min_val\n\nprint(find_max_min([4, 2, 9, 1, 7]))`,
         output: `(9, 1)`
     }, {
         name: 'Second Largest Element',
         difficulty: 'medium',
+        mastered: false,
         key: 'Track the largest and second-largest together in one pass: when a new max appears, the old max demotes to second.',
         code: `def second_largest(nums):\n    first = second = float('-inf')\n    for n in nums:\n        if n > first:\n            first, second = n, first\n        elif first > n > second:\n            second = n\n    return second\n\nprint(second_largest([10, 5, 20, 8, 20, 15]))`,
         output: `15`
     }, {
         name: 'Linear Search',
         difficulty: 'easy',
+        mastered: false,
         key: 'Scan every element once; the only "formula" is to stop and return the index the instant you find a match.',
         code: `def linear_search(nums, target):\n    for i, n in enumerate(nums):\n        if n == target:\n            return i\n    return -1\n\nprint(linear_search([8, 3, 11, 6, 2], 6))`,
         output: `3`
     }, {
         name: 'Binary Search (sorted list)',
         difficulty: 'medium',
+        mastered: false,
         key: 'Only works on sorted data. Compare the middle element; the answer can only be in the half that "agrees" with it — halving the search space every step (O(log n)).',
         code: `def binary_search(nums, target):\n    low, high = 0, len(nums) - 1\n    while low <= high:\n        mid = (low + high) // 2\n        if nums[mid] == target:\n            return mid\n        elif nums[mid] < target:\n            low = mid + 1\n        else:\n            high = mid - 1\n    return -1\n\nprint(binary_search([1, 3, 5, 7, 9, 11, 13], 9))`,
         output: `4`
     }, {
         name: 'Bubble Sort',
         difficulty: 'easy',
+        mastered: false,
         key: 'Repeatedly swap adjacent out-of-order pairs; each full pass "bubbles" the largest remaining value to the end.',
         code: `def bubble_sort(nums):\n    n = len(nums)\n    for i in range(n):\n        for j in range(0, n - i - 1):\n            if nums[j] > nums[j + 1]:\n                nums[j], nums[j + 1] = nums[j + 1], nums[j]\n    return nums\n\nprint(bubble_sort([5, 1, 4, 2, 8]))`,
         output: `[1, 2, 4, 5, 8]`
     }, {
         name: 'Remove Duplicates from a List',
         difficulty: 'easy',
+        mastered: false,
         key: 'dict.fromkeys(list) drops duplicates AND preserves order (sets don\'t) — a one-line trick worth memorizing.',
         code: `nums = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]\nunique = list(dict.fromkeys(nums))\nprint(unique)`,
         output: `[3, 1, 4, 5, 9, 2, 6]`
     }, {
         name: 'Find the Missing Number (1 to N)',
         difficulty: 'medium',
+        mastered: false,
         key: 'The sum of 1..N has a closed-form formula: N*(N+1)/2. Subtract the actual sum from that — whatever\'s left is the gap.',
         code: `def find_missing(nums, n):\n    expected_sum = n * (n + 1) // 2\n    return expected_sum - sum(nums)\n\n# 1..8 with 5 missing\nprint(find_missing([1, 2, 3, 4, 6, 7, 8], 8))`,
         output: `5`
     }, {
         name: 'Two Sum (pairs adding to a target)',
         difficulty: 'medium',
+        mastered: false,
         key: 'A hash map turns "have I seen target - x before?" into an O(1) lookup, dropping the brute-force O(n²) to O(n).',
         code: `def two_sum(nums, target):\n    seen = {}\n    for i, n in enumerate(nums):\n        complement = target - n\n        if complement in seen:\n            return (seen[complement], i)\n        seen[n] = i\n    return None\n\nprint(two_sum([2, 7, 11, 15], 9))`,
         output: `(0, 1)`
@@ -593,18 +775,21 @@ const PY_FORMULAS_DATA = [{
     programs: [{
         name: 'FizzBuzz',
         difficulty: 'easy',
+        mastered: false,
         key: 'Check the most specific rule first (divisible by both 3 AND 5) before the broader ones — order of conditions matters.',
         code: `for i in range(1, 16):\n    if i % 15 == 0:\n        print("FizzBuzz")\n    elif i % 3 == 0:\n        print("Fizz")\n    elif i % 5 == 0:\n        print("Buzz")\n    else:\n        print(i)`,
         output: `1\n2\nFizz\n4\nBuzz\nFizz\n7\n8\nFizz\nBuzz\n11\nFizz\n13\n14\nFizzBuzz`
     }, {
         name: 'Right Triangle / Pyramid Pattern',
         difficulty: 'easy',
+        mastered: false,
         key: 'Nest a nice round number of stars per row equal to the row index — the outer loop picks the row, the inner loop draws it.',
         code: `rows = 5\nfor i in range(1, rows + 1):\n    print("*" * i)`,
         output: `*\n**\n***\n****\n*****`
     }, {
         name: "Pascal's Triangle",
         difficulty: 'medium',
+        mastered: false,
         key: 'Every number is the sum of the two numbers above it. Build each row from the previous one instead of recomputing factorials.',
         code: `def pascals_triangle(rows):\n    triangle = [[1]]\n    for i in range(1, rows):\n        prev = triangle[-1]\n        row = [1] + [prev[j] + prev[j + 1] for j in range(len(prev) - 1)] + [1]\n        triangle.append(row)\n    return triangle\n\nfor row in pascals_triangle(5):\n    print(row)`,
         output: `[1]\n[1, 1]\n[1, 2, 1]\n[1, 3, 3, 1]\n[1, 4, 6, 4, 1]`
@@ -615,33 +800,340 @@ const PY_FORMULAS_DATA = [{
     programs: [{
         name: 'Factorial (recursive)',
         difficulty: 'easy',
+        mastered: false,
         key: 'Every recursive formula needs a base case (stop condition) and a step that reduces toward it: n! = n × (n-1)!.',
         code: `def factorial(n):\n    if n <= 1:        # base case\n        return 1\n    return n * factorial(n - 1)   # reduces toward the base case\n\nprint(factorial(5))`,
         output: `120`
     }, {
         name: 'Fibonacci (recursive + memoization)',
         difficulty: 'medium',
+        mastered: false,
         key: 'Plain recursion re-solves the same sub-problems exponentially many times. @lru_cache memoizes results, dropping it to O(n).',
         code: `from functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint([fib(i) for i in range(10)])`,
         output: `[0, 1, 1, 2, 3, 5, 8, 13, 21, 34]`
     }, {
         name: 'Binary Search (recursive)',
         difficulty: 'medium',
+        mastered: false,
         key: 'Same halving idea as iterative binary search, but the "loop" is expressed as the function calling a smaller version of itself.',
         code: `def binary_search(nums, target, low=0, high=None):\n    if high is None:\n        high = len(nums) - 1\n    if low > high:\n        return -1\n    mid = (low + high) // 2\n    if nums[mid] == target:\n        return mid\n    elif nums[mid] < target:\n        return binary_search(nums, target, mid + 1, high)\n    else:\n        return binary_search(nums, target, low, mid - 1)\n\nprint(binary_search([1, 3, 5, 7, 9, 11], 11))`,
         output: `5`
     }, {
         name: 'Stack & Queue (using a plain list)',
         difficulty: 'easy',
+        mastered: false,
         key: 'Stack = Last-In-First-Out: append()/pop() at the same end. Queue = First-In-First-Out: append() one end, pop(0) the other (or use deque for O(1)).',
         code: `# Stack (LIFO)\nstack = []\nstack.append(1); stack.append(2); stack.append(3)\nprint("Stack pop:", stack.pop())   # 3 — last one in, first one out\n\n# Queue (FIFO) — use deque for O(1) instead of list.pop(0)\nfrom collections import deque\nqueue = deque()\nqueue.append(1); queue.append(2); queue.append(3)\nprint("Queue popleft:", queue.popleft())   # 1 — first one in, first one out`,
         output: `Stack pop: 3\nQueue popleft: 1`
     }, {
         name: 'Reverse a Linked List (conceptual)',
         difficulty: 'hard',
+        mastered: false,
         key: 'Walk the list once, flipping each node\'s "next" pointer to point backward instead of forward — three pointers (prev, curr, next) is the formula.',
         code: `class Node:\n    def __init__(self, value, next=None):\n        self.value, self.next = value, next\n\ndef reverse_linked_list(head):\n    prev = None\n    curr = head\n    while curr:\n        next_node = curr.next   # save before we overwrite it\n        curr.next = prev        # flip the pointer\n        prev = curr\n        curr = next_node\n    return prev   # new head\n\n# Build 1 -> 2 -> 3, then reverse it\nhead = Node(1, Node(2, Node(3)))\nnew_head = reverse_linked_list(head)\nvals = []\nwhile new_head:\n    vals.append(new_head.value)\n    new_head = new_head.next\nprint(vals)`,
         output: `[3, 2, 1]`
+    }]
+}, {
+    category: 'Variables, Data Types & Type Casting',
+    icon: '🔡',
+    programs: [{
+        name: 'Variables & Dynamic Typing',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'Python variables have no fixed type — the same name can point to an int, then a string, then a list. type(x) tells you what it currently holds.',
+        realWorld: 'Reading a config value from a file or API that might arrive as a string, int, or bool, and branching logic based on type(value).',
+        mistake: 'Beginners assume a variable "is" a type forever (like in Java/C). In Python, x = 5 then x = "five" is completely legal — the type just follows whatever is currently assigned.',
+        code: `x = 10\nprint(type(x))\nx = "now I'm a string"\nprint(type(x))\nx = [1, 2, 3]\nprint(type(x))`,
+        output: `<class 'int'>\n<class 'str'>\n<class 'list'>`
+    }, {
+        name: 'Type Casting (int, float, str, bool)',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'int(), float(), str(), bool() convert between types explicitly — Python never silently converts types for you (no "5" + 5 auto-coercion like in JS).',
+        realWorld: 'User input from input() always arrives as a string — you must int() or float() it before doing math with it.',
+        mistake: 'Forgetting that input() returns a string. age = input("Age: "); age + 1 raises a TypeError until you write int(age) + 1.',
+        code: `age_str = "25"\nage = int(age_str)\nprint(age + 1)\n\nprint(bool(0), bool(1), bool(""), bool("hi"))   # falsy vs truthy values\nprint(float("3.14") + 1)`,
+        output: `26\nFalse True False True\n4.14`
+    }, {
+        name: 'Mutable vs Immutable Types',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'Lists/dicts/sets are mutable (can change in place). Strings/tuples/ints are immutable (any "change" actually creates a brand-new object).',
+        realWorld: 'Explains a classic bug: passing a list into a function and having it modified lets the change "leak" back to the caller — because both names point to the same mutable object.',
+        mistake: 'Using a mutable default argument: def f(items=[]): — that single list is shared and reused across every call, silently accumulating values!',
+        code: `def append_bad(item, items=[]):     # BUG: default list is created ONCE, shared forever\n    items.append(item)\n    return items\n\nprint(append_bad(1))   # [1]\nprint(append_bad(2))   # [1, 2]  <- surprise! Same list as before\n\ndef append_good(item, items=None):  # FIX: create a fresh list each call\n    if items is None:\n        items = []\n    items.append(item)\n    return items\n\nprint(append_good(1))  # [1]\nprint(append_good(2))  # [2]  <- correct, independent`,
+        output: `[1]\n[1, 2]\n[1]\n[2]`
+    }, {
+        name: 'f-strings & String Formatting',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'f"{value:format_spec}" embeds expressions directly in a string and lets you control decimals, padding, and alignment in one syntax.',
+        realWorld: 'Formatting currency, percentages, or tables for a CLI report or log line without manually concatenating str() conversions.',
+        mistake: 'Mixing up .2f (2 decimal places) with :.2% (percentage) — :.2% multiplies by 100 automatically, a common source of "off by 100x" bugs.',
+        code: `price = 1234.5\nratio = 0.4567\nname = "Alice"\n\nprint(f"{name:<10} | {price:>10,.2f} | {ratio:.1%}")\nprint(f"{42:08b}")   # binary, zero-padded to 8 digits`,
+        output: `Alice      |   1,234.50 | 45.7%\n00101010`
+    }]
+}, {
+    category: 'Input/Output & Operators',
+    icon: '⌨️',
+    programs: [{
+        name: 'Reading & Validating User Input',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'input() always returns a string — wrap it in a try/except with int()/float() to validate it before trusting it as a number.',
+        realWorld: 'Any CLI tool that asks a person to type a number (age, quantity, menu choice) needs to handle "abc" being typed instead of "5" without crashing.',
+        mistake: 'Calling int(input(...)) directly with no error handling — one bad keystroke from the user crashes the whole script.',
+        code: `def get_positive_int(prompt):\n    while True:\n        raw = input(prompt)\n        try:\n            value = int(raw)\n            if value > 0:\n                return value\n            print("Please enter a positive number.")\n        except ValueError:\n            print(f"{raw!r} is not a valid number.")\n\n# Simulated input for demonstration (normally this pauses for real typing)\nfor simulated in ["abc", "-5", "12"]:\n    print(f"User typed: {simulated!r}")\nprint("Accepted: 12")`,
+        output: `User typed: 'abc'\nUser typed: '-5'\nUser typed: '12'\nAccepted: 12`
+    }, {
+        name: 'Arithmetic, Comparison & Logical Operators',
+        difficulty: 'easy',
+        mastered: false,
+        key: '// is floor (integer) division, % is remainder, ** is power. and/or/not work on truthy values, not just booleans, and short-circuit (stop early).',
+        realWorld: 'Splitting a total into "full boxes" and "leftover items" uses divmod() — exactly the // and % pair — in one shipping/inventory calculation.',
+        mistake: 'Confusing / (always returns a float) with // (floor division, drops the remainder): 7 / 2 is 3.5, but 7 // 2 is 3.',
+        code: `total_items, box_size = 23, 5\nfull_boxes, leftover = divmod(total_items, box_size)   # same as (//, %) together\nprint(f"{full_boxes} full boxes, {leftover} leftover")\n\nage, has_id = 17, True\ncan_enter = age >= 18 or (age >= 16 and has_id)   # short-circuits: skips the 'and' if age>=18\nprint(can_enter)`,
+        output: `4 full boxes, 3 leftover\nFalse`
+    }, {
+        name: 'Ternary (Conditional) Expression',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'value_if_true if condition else value_if_false packs a simple if/else into one expression — great inside a list comprehension or a single assignment.',
+        realWorld: 'Labeling each score as "Pass" or "Fail" inline while building a results list, instead of writing a 4-line if/else block per item.',
+        mistake: 'Nesting too many ternaries on one line ("a if x else b if y else c") — readable for one level, a maze for two or more. Use a normal if/elif/else once it gets that complex.',
+        code: `scores = [45, 78, 92, 33, 60]\nresults = ["Pass" if s >= 50 else "Fail" for s in scores]\nprint(results)`,
+        output: `['Fail', 'Pass', 'Pass', 'Fail', 'Pass']`
+    }, {
+        name: 'Grading System (if / elif / else chain)',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'Order matters: check the highest threshold first. An if/elif/else chain stops at the FIRST true condition, so structure it from most-specific to least-specific.',
+        realWorld: 'One of the most commonly asked beginner interview questions — tests whether you understand condition ordering, not just syntax.',
+        mistake: 'Writing the conditions in the wrong order (checking score >= 60 before score >= 90) — every score of 90+ would incorrectly match the first, broader condition.',
+        code: `def grade(score):\n    if score >= 90:\n        return "A"\n    elif score >= 80:\n        return "B"\n    elif score >= 70:\n        return "C"\n    elif score >= 60:\n        return "D"\n    else:\n        return "F"\n\nfor s in [95, 82, 71, 55]:\n    print(f"{s} -> {grade(s)}")`,
+        output: `95 -> A\n82 -> B\n71 -> C\n55 -> F`
+    }]
+}, {
+    category: 'Tuples, Sets & Dictionaries',
+    icon: '🗂️',
+    programs: [{
+        name: 'Tuples — Immutable, Ordered Pairs',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'A tuple (a, b, c) is like a list that can never change after creation — use it for fixed groupings (coordinates, RGB values) where accidental mutation would be a bug.',
+        realWorld: 'A function that needs to return more than one value — return (min_val, max_val) — and the caller unpacks it: low, high = get_range(data).',
+        mistake: 'Writing (5) thinking it\'s a one-item tuple — it\'s just the integer 5! A single-item tuple needs a trailing comma: (5,).',
+        code: `def min_max(nums):\n    return min(nums), max(nums)   # returns a tuple implicitly\n\nlow, high = min_max([4, 9, 1, 7])\nprint(f"low={low}, high={high}")\n\nnot_a_tuple = (5)\nis_a_tuple = (5,)\nprint(type(not_a_tuple), type(is_a_tuple))`,
+        output: `low=1, high=9\n<class 'int'> <class 'tuple'>`
+    }, {
+        name: 'Sets — Unique Items & Fast Membership',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A set stores only unique items with O(1) "is X in here?" lookups — and supports math-style operations: union (|), intersection (&), difference (-).',
+        realWorld: 'Finding which customers exist in both this month\'s and last month\'s active-user lists — a job for set intersection, far faster than nested loops.',
+        mistake: 'Expecting a set to preserve insertion order or allow duplicates — sets do neither; if order matters, use dict.fromkeys() (covered in the algorithms section) or a list instead.',
+        code: `this_month = {"alice", "bob", "carol"}\nlast_month = {"bob", "carol", "dave"}\n\nprint("Retained:", this_month & last_month)     # intersection\nprint("New this month:", this_month - last_month)  # difference\nprint("All users:", this_month | last_month)        # union`,
+        output: `Retained: {'bob', 'carol'}\nNew this month: {'alice'}\nAll users: {'alice', 'bob', 'carol', 'dave'}`
+    }, {
+        name: 'Dictionaries — Key/Value Lookups',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'A dict maps keys to values with O(1) lookup. .get(key, default) avoids a KeyError when a key might be missing — far safer than dict[key] alone.',
+        realWorld: 'Counting word frequency, caching expensive function results by their input, or representing a single JSON-style record (a user profile, a config).',
+        mistake: 'Using my_dict[key] when the key might not exist — it raises a KeyError and crashes. .get(key, 0) (or setdefault) is the safe pattern.',
+        code: `inventory = {"apples": 10, "bananas": 5}\n\nprint(inventory.get("apples", 0))\nprint(inventory.get("cherries", 0))   # missing key -> safe default, no crash\n\n# Update or insert in one step\ninventory["cherries"] = inventory.get("cherries", 0) + 3\nprint(inventory)`,
+        output: `10\n0\n{'apples': 10, 'bananas': 5, 'cherries': 3}`
+    }, {
+        name: 'Dictionary & Set Comprehensions',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'Just like list comprehensions, {k: v for ...} and {x for ...} build dicts/sets in one expression instead of a manual loop with assignment.',
+        realWorld: 'Inverting a dict (swapping keys and values) or building a lookup table from two parallel lists in a single readable line.',
+        mistake: 'Inverting a dict with duplicate values: {v: k for k, v in d.items()} silently drops earlier keys that shared a value — only the last one survives.',
+        code: `prices = {"apple": 1.5, "banana": 0.5, "cherry": 3.0}\n\n# Dict comprehension: only items over $1\nexpensive = {k: v for k, v in prices.items() if v > 1}\nprint(expensive)\n\n# Set comprehension: unique price points\nunique_prices = {v for v in prices.values()}\nprint(unique_prices)`,
+        output: `{'apple': 1.5, 'cherry': 3.0}\n{1.5, 0.5, 3.0}`
+    }]
+}, {
+    category: 'File Handling',
+    icon: '📁',
+    programs: [{
+        name: 'Reading & Writing Text Files',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'with open(path, mode) as f: automatically closes the file even if an error happens inside the block — always prefer it over manual open()/close().',
+        realWorld: 'Saving a daily log, a generated report, or a small config file without a database — the most common real-world starting point for "persisting data."',
+        mistake: 'Calling open() without with — if an exception happens before f.close(), the file handle leaks open, which can lock the file or lose buffered writes.',
+        code: `# Write\nwith open("notes.txt", "w") as f:\n    f.write("Day 1: Started learning Python\\n")\n    f.write("Day 2: Built a calculator\\n")\n\n# Read it back\nwith open("notes.txt", "r") as f:\n    content = f.read()\nprint(content)`,
+        output: `Day 1: Started learning Python\nDay 2: Built a calculator`
+    }, {
+        name: 'Append Mode vs Overwrite Mode',
+        difficulty: 'easy',
+        mastered: false,
+        key: '"w" mode erases the file and starts fresh every time you open it. "a" mode adds to the end without touching what\'s already there — pick deliberately.',
+        realWorld: 'A logging system uses "a" so each new run adds to the log history; a "regenerate this report" script uses "w" so old data doesn\'t linger.',
+        mistake: 'Using "w" inside a loop that runs multiple times (e.g. once per day) — each run wipes out everything written by the previous run.',
+        code: `with open("log.txt", "w") as f:\n    f.write("Run 1 started\\n")\n\nwith open("log.txt", "a") as f:        # appends, doesn't erase Run 1\n    f.write("Run 2 started\\n")\n\nwith open("log.txt", "r") as f:\n    print(f.read())`,
+        output: `Run 1 started\nRun 2 started`
+    }, {
+        name: 'Reading Line by Line (large files)',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'for line in f: reads one line at a time — it never loads the whole file into memory, so it scales to files far bigger than your RAM.',
+        realWorld: 'Processing a multi-gigabyte log file or CSV export where f.read() (loading everything at once) would crash the program with an out-of-memory error.',
+        mistake: 'Using f.readlines() on a huge file "to make it easier to loop" — that defeats the purpose, since it loads the entire file into a list in memory anyway.',
+        code: `with open("notes.txt", "w") as f:\n    for i in range(1, 4):\n        f.write(f"Line {i}\\n")\n\nwith open("notes.txt", "r") as f:\n    for line in f:                # one line at a time, memory-safe\n        print(line.strip().upper())`,
+        output: `LINE 1\nLINE 2\nLINE 3`
+    }, {
+        name: 'Reading CSV Files',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'The built-in csv module (or csv.DictReader for named columns) handles quoting and commas-inside-fields correctly — splitting on "," manually breaks on real-world data.',
+        realWorld: 'Almost every data-import task — bank statements, exported spreadsheets, sensor logs — arrives as CSV before it ever reaches Pandas.',
+        mistake: 'Parsing CSV with line.split(",") — breaks immediately on any field containing a comma inside quotes, e.g. "Smith, John",42.',
+        code: `import csv\nimport io\n\ncsv_text = "name,age,city\\nAlice,30,NYC\\nBob,25,\\"LA, CA\\""\n\nreader = csv.DictReader(io.StringIO(csv_text))\nfor row in reader:\n    print(row)`,
+        output: `{'name': 'Alice', 'age': '30', 'city': 'NYC'}\n{'name': 'Bob', 'age': '25', 'city': 'LA, CA'}`
+    }]
+}, {
+    category: 'Exception Handling',
+    icon: '🚨',
+    programs: [{
+        name: 'try / except / else / finally',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'try runs the risky code. except catches a specific error type. else runs only if NO exception occurred. finally always runs — error or not — perfect for cleanup.',
+        realWorld: 'Dividing two numbers from user input, opening a file that might not exist, or calling an external API that might time out — anywhere failure is expected, not exceptional.',
+        mistake: 'Writing a bare except: (catching everything) — this silently swallows real bugs (like a typo in a variable name) along with the error you meant to handle.',
+        code: `def safe_divide(a, b):\n    try:\n        result = a / b\n    except ZeroDivisionError:\n        print("Can't divide by zero!")\n        return None\n    else:\n        print("Division succeeded")\n        return result\n    finally:\n        print("Cleanup: this always runs")\n\nprint(safe_divide(10, 2))\nprint(safe_divide(10, 0))`,
+        output: `Division succeeded\nCleanup: this always runs\n5.0\nCan't divide by zero!\nCleanup: this always runs\nNone`
+    }, {
+        name: 'Catching Multiple Specific Exceptions',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'Stack except blocks from most-specific to least-specific (or group with a tuple: except (TypeError, ValueError):) — Python checks them top to bottom, same as if/elif.',
+        realWorld: 'Parsing user-supplied data where the failure could be a ValueError (bad format), a TypeError (wrong type entirely), or a KeyError (missing field) — each needs a different message.',
+        mistake: 'Putting except Exception: before a more specific except ValueError: — the broad one runs first and the specific block becomes unreachable dead code.',
+        code: `def process(data, key):\n    try:\n        value = data[key]\n        return int(value) * 2\n    except KeyError:\n        return f"Missing key: {key}"\n    except (ValueError, TypeError):\n        return f"Bad value for {key}: {data.get(key)!r}"\n\nprint(process({"age": "25"}, "age"))\nprint(process({"age": "abc"}, "age"))\nprint(process({"age": "25"}, "score"))`,
+        output: `50\nBad value for age: 'abc'\nMissing key: score`
+    }, {
+        name: 'Raising Custom Exceptions',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'Subclassing Exception lets you define your own error types — raise InsufficientFundsError(...) is far more readable and catchable than raising a generic ValueError everywhere.',
+        realWorld: 'A banking or e-commerce system that needs callers to specifically catch "insufficient funds" vs. "invalid account" vs. "expired card" as distinct, handleable cases.',
+        mistake: 'Raising a bare string (raise "Error!") — Python 3 doesn\'t even allow this; it must always be an Exception instance/class, which is why custom exception classes matter.',
+        code: `class InsufficientFundsError(Exception):\n    def __init__(self, balance, amount):\n        super().__init__(f"Balance \${balance} too low to withdraw \${amount}")\n\ndef withdraw(balance, amount):\n    if amount > balance:\n        raise InsufficientFundsError(balance, amount)\n    return balance - amount\n\ntry:\n    withdraw(100, 250)\nexcept InsufficientFundsError as e:\n    print(f"Transaction blocked: {e}")`,
+        output: `Transaction blocked: Balance $100 too low to withdraw $250`
+    }, {
+        name: 'Exception Chaining (raise ... from ...)',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'raise NewError(...) from original_error preserves the original traceback as context — invaluable when you wrap a low-level error (e.g. a network failure) in a higher-level, more meaningful one.',
+        realWorld: 'A data pipeline catches a low-level JSONDecodeError and re-raises it as a clear DataValidationError, without losing the original cause for debugging.',
+        mistake: 'Catching an exception and re-raising a totally new one with no "from" — this erases the original traceback, making the real root cause much harder to debug later.',
+        code: `class DataValidationError(Exception):\n    pass\n\ndef parse_record(raw):\n    try:\n        return int(raw)\n    except ValueError as original_error:\n        raise DataValidationError(f"Invalid record: {raw!r}") from original_error\n\ntry:\n    parse_record("not-a-number")\nexcept DataValidationError as e:\n    print(f"{type(e).__name__}: {e}")\n    print(f"Caused by: {type(e.__cause__).__name__}")`,
+        output: `DataValidationError: Invalid record: 'not-a-number'\nCaused by: ValueError`
+    }]
+}, {
+    category: 'Modules, Packages & Virtual Environments',
+    icon: '📦',
+    programs: [{
+        name: 'Importing & the if __name__ == "__main__" idiom',
+        difficulty: 'easy',
+        mastered: false,
+        key: 'Every .py file is a module. __name__ equals "__main__" only when that file is run directly (not when it\'s imported elsewhere) — gate your "run this script" code behind that check.',
+        realWorld: 'Writing a utility file full of reusable functions that can ALSO be run standalone for a quick test, without that test code firing every time someone imports it elsewhere.',
+        mistake: 'Putting top-level executable code (like a function call) directly in a module with no __name__ guard — it silently runs every single time that file is imported anywhere.',
+        code: `# math_utils.py (conceptual)\ndef square(x):\n    return x * x\n\nif __name__ == "__main__":\n    # Only runs when this file is executed directly,\n    # NOT when another file does "from math_utils import square"\n    print("Running self-test...")\n    print(square(5))\n\nprint(f"This module's name right now: {__name__}")`,
+        output: `Running self-test...\n25\nThis module's name right now: __main__`
+    }, {
+        name: 'Organizing Code into Packages',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A package is just a folder with an __init__.py file inside it — that file (even if empty) is what tells Python "treat this folder as an importable package."',
+        realWorld: 'Splitting a growing project into logical folders: myapp/data/, myapp/models/, myapp/utils/ — each importable as myapp.data, myapp.models, etc.',
+        mistake: 'Forgetting __init__.py in older Python tooling/setups, or putting unrelated heavy imports inside it — code in __init__.py runs every time ANY module in that package is imported.',
+        code: `package_layout = """\nmyapp/\n├── __init__.py\n├── data/\n│   ├── __init__.py\n│   └── loader.py      <- def load_csv(path): ...\n├── models/\n│   ├── __init__.py\n│   └── regression.py  <- class LinearModel: ...\n"""\nprint(package_layout)\nprint("Usage elsewhere: from myapp.data.loader import load_csv")`,
+        output: `myapp/\n├── __init__.py\n├── data/\n│   ├── __init__.py\n│   └── loader.py      <- def load_csv(path): ...\n├── models/\n│   ├── __init__.py\n│   └── regression.py  <- class LinearModel: ...\n\nUsage elsewhere: from myapp.data.loader import load_csv`
+    }, {
+        name: 'Virtual Environments & requirements.txt',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A virtual environment is an isolated, project-specific copy of Python + its packages — so Project A needing pandas 1.5 and Project B needing pandas 2.1 never conflict on the same machine.',
+        realWorld: 'Every professional Python project, full stop. It\'s the #1 thing separating "it works on my machine" chaos from a reproducible, shareable setup.',
+        mistake: 'Installing packages globally with pip install (no venv active) — eventually two unrelated projects fight over conflicting versions of the same library on your system.',
+        code: `commands = """\n# Create an isolated environment named 'venv'\npython -m venv venv\n\n# Activate it (this changes per OS)\nsource venv/bin/activate        # macOS / Linux\nvenv\\\\Scripts\\\\activate           # Windows\n\n# Install packages — they go into venv/, not system-wide\npip install pandas scikit-learn requests\n\n# Freeze exact versions so teammates can reproduce your setup\npip freeze > requirements.txt\n\n# A teammate then recreates your exact environment with:\npip install -r requirements.txt\n"""\nprint(commands)`,
+        output: `# Create an isolated environment named 'venv'\npython -m venv venv\n\n# Activate it (this changes per OS)\nsource venv/bin/activate        # macOS / Linux\nvenv\\Scripts\\activate           # Windows\n\n# Install packages — they go into venv/, not system-wide\npip install pandas scikit-learn requests\n\n# Freeze exact versions so teammates can reproduce your setup\npip freeze > requirements.txt\n\n# A teammate then recreates your exact environment with:\npip install -r requirements.txt`
+    }]
+}, {
+    category: 'Iterators & Iteration Protocol',
+    icon: '🔄',
+    programs: [{
+        name: 'iter() and next() — The Iteration Protocol',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'A for loop is secretly doing this for you: it calls iter(obj) once to get an iterator, then next(iterator) repeatedly until a StopIteration is raised.',
+        realWorld: 'Understanding this protocol is what lets you build your own custom sequence types (database cursors, paginated API results) that work seamlessly with for loops.',
+        mistake: 'Confusing an "iterable" (anything you CAN loop over, like a list) with an "iterator" (the stateful object that actually tracks position) — a list is iterable but is not itself an iterator.',
+        code: `nums = [10, 20, 30]\niterator = iter(nums)         # this is what 'for' does behind the scenes\n\nprint(next(iterator))\nprint(next(iterator))\nprint(next(iterator))\ntry:\n    print(next(iterator))     # nothing left\nexcept StopIteration:\n    print("No more items!")`,
+        output: `10\n20\n30\nNo more items!`
+    }, {
+        name: 'Building a Custom Iterator Class',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'Implement __iter__ (returns self) and __next__ (returns the next value or raises StopIteration) on a class, and instances of it work directly in a for loop, just like a list.',
+        realWorld: 'A custom "paginator" that lazily fetches the next page of API results only when asked — without loading every page into memory up front.',
+        mistake: 'Implementing __next__ but forgetting __iter__ (or vice versa) — a for loop needs BOTH methods present to accept your object as iterable.',
+        code: `class Countdown:\n    def __init__(self, start):\n        self.current = start\n\n    def __iter__(self):\n        return self            # the object IS its own iterator\n\n    def __next__(self):\n        if self.current <= 0:\n            raise StopIteration\n        value = self.current\n        self.current -= 1\n        return value\n\nfor n in Countdown(5):\n    print(n, end=" ")\nprint()`,
+        output: `5 4 3 2 1`
+    }, {
+        name: 'itertools Essentials (chain, combinations, groupby)',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'itertools is the standard library\'s toolbox of memory-efficient iterator building-blocks — chain() flattens, combinations() generates all groupings, groupby() clusters consecutive equal items.',
+        realWorld: 'combinations() for testing every possible pair of A/B test variants; groupby() for summarizing already-sorted log data by date without a manual accumulator loop.',
+        mistake: 'Reaching for nested for loops to generate combinations manually — itertools.combinations is both more readable and avoids off-by-one bugs in the index ranges.',
+        code: `from itertools import chain, combinations\n\n# Flatten multiple lists without a nested loop\nflat = list(chain([1, 2], [3, 4], [5]))\nprint(flat)\n\n# All unique pairs from a list — common for A/B test matchups\npairs = list(combinations(["A", "B", "C"], 2))\nprint(pairs)`,
+        output: `[1, 2, 3, 4, 5]\n[('A', 'B'), ('A', 'C'), ('B', 'C')]`
+    }]
+}, {
+    category: 'API Calls & Automation Scripts',
+    icon: '🌐',
+    programs: [{
+        name: 'Making a GET Request & Parsing JSON',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'requests.get(url).json() turns an HTTP API response straight into a Python dict/list — almost every real data source (weather, stocks, internal services) is consumed this way.',
+        realWorld: 'Pulling live exchange rates, weather data, or your own company\'s internal REST API into a script or notebook for analysis.',
+        mistake: 'Not checking response.status_code (or calling .raise_for_status()) before using the data — a failed request (404, 500) can return an error page that breaks .json() parsing in a confusing way.',
+        code: `# Conceptual — actual network call shown for illustration\n# import requests\n# response = requests.get("https://api.example.com/users/1")\n# response.raise_for_status()      # raises an exception on 4xx/5xx instead of silently continuing\n# data = response.json()\n\n# Simulating what comes back, to show the resulting pattern:\ndata = {"id": 1, "name": "Alice", "email": "alice@example.com"}\nprint(f"Status: 200 OK")\nprint(f"User: {data['name']} ({data['email']})")`,
+        output: `Status: 200 OK\nUser: Alice (alice@example.com)`
+    }, {
+        name: 'POST Request with a JSON Body',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'requests.post(url, json=payload) automatically serializes a dict to JSON AND sets the Content-Type header for you — no manual json.dumps() needed.',
+        realWorld: 'Submitting a form, creating a record via a REST API, or sending a Slack/Discord webhook notification from an automation script.',
+        mistake: 'Using data=payload instead of json=payload — data= sends form-encoded data, which many JSON APIs will silently reject or misinterpret.',
+        code: `# Conceptual — actual network call shown for illustration\n# import requests\n# payload = {"title": "New Task", "done": False}\n# response = requests.post("https://api.example.com/tasks", json=payload)\n\npayload = {"title": "New Task", "done": False}\nprint(f"POST body (auto-serialized): {payload}")\nprint("Header set automatically: Content-Type: application/json")`,
+        output: `POST body (auto-serialized): {'title': 'New Task', 'done': False}\nHeader set automatically: Content-Type: application/json`
+    }, {
+        name: 'Automation: Bulk-Renaming Files',
+        difficulty: 'medium',
+        mastered: false,
+        key: 'pathlib.Path makes filesystem automation OS-independent — .glob() finds matching files, .stem/.suffix split the name from the extension, .rename() does the move.',
+        realWorld: 'Cleaning up a folder of 500 photos named IMG_0001.jpg into something searchable like vacation_2024_0001.jpg in a few lines instead of by hand.',
+        mistake: 'Hardcoding path separators with string concatenation (folder + "/" + filename) — breaks on Windows. pathlib\'s / operator (Path(folder) / filename) works cross-platform.',
+        code: `from pathlib import Path\n\n# Conceptual — listing actual files would require a real folder\n# folder = Path("./photos")\n# for i, file in enumerate(sorted(folder.glob("*.jpg")), start=1):\n#     new_name = f"vacation_2024_{i:04d}{file.suffix}"\n#     file.rename(file.with_name(new_name))\n\nexample_files = ["IMG_0001.jpg", "IMG_0002.jpg", "IMG_0003.jpg"]\nfor i, name in enumerate(example_files, start=1):\n    suffix = Path(name).suffix\n    new_name = f"vacation_2024_{i:04d}{suffix}"\n    print(f"{name}  ->  {new_name}")`,
+        output: `IMG_0001.jpg  ->  vacation_2024_0001.jpg\nIMG_0002.jpg  ->  vacation_2024_0002.jpg\nIMG_0003.jpg  ->  vacation_2024_0003.jpg`
+    }, {
+        name: 'Automation: Scheduled Script Pattern',
+        difficulty: 'hard',
+        mastered: false,
+        key: 'A robust automation script separates "the task" (a plain function) from "the trigger" (cron, Task Scheduler, or the schedule library) — so you can test the task manually before ever scheduling it.',
+        realWorld: 'A nightly script that downloads a report, emails a summary, and logs success/failure — the same shape as most real business-automation tasks.',
+        mistake: 'Writing the entire script as one long top-to-bottom block with no functions and no error handling — one failure (a missing file, a network blip) crashes the whole run with no record of what happened.',
+        code: `import datetime\n\ndef run_daily_report():\n    try:\n        # ... fetch data, build report ...\n        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")\n        print(f"[{timestamp}] Report generated successfully.")\n        return True\n    except Exception as e:\n        print(f"Report failed: {e}")\n        return False\n\n# In production this function is the "task"; a scheduler (cron, Task\n# Scheduler, or the 'schedule' library) is the "trigger" that calls it daily.\nrun_daily_report()`,
+        output: `[2026-06-28 09:00] Report generated successfully.`
     }]
 }];
 
@@ -680,6 +1172,7 @@ let pyFormulaState = {
     query: '',
     expandedCategories: new Set([0]),
     openCode: new Set(), // keys "categoryIndex-programIndex" currently showing code
+    checklistMode: false,
 };
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1247,6 +1740,10 @@ const views = {
 
     // ─── PYTHON KEY PROGRAMS ("FORMULAS") ──────────────
     pyformulas() {
+        const allPrograms = PY_FORMULAS_DATA.flatMap(c => c.programs);
+        const masteredCount = allPrograms.filter(p => p.mastered).length;
+        const totalCount = allPrograms.length;
+
         let html = `
               <div class="card full">
                 <h2>🐍 Python Key Programs <span class="sub">— memorize these like the quadratic formula</span></h2>
@@ -1256,16 +1753,27 @@ const views = {
                   an entire class of problems. Learn the <strong style="color:#60a5fa;">🔑 key idea</strong> first — the code
                   follows naturally once the pattern clicks.
                 </p>
+                <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:0.8rem;">
+                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#4ade80;">✅ ${masteredCount} mastered</div>
+                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#fbbf24;">⏳ ${totalCount - masteredCount} remaining</div>
+                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#60a5fa;">🎯 ${totalCount ? Math.round((masteredCount / totalCount) * 100) : 0}% complete</div>
+                  <div style="background:#14233e;padding:0.3rem 1rem;border-radius:30px;font-size:0.75rem;color:#a78bfa;">📦 ${PY_FORMULAS_DATA.length} categories · ${totalCount} programs</div>
+                </div>
                 <div class="syllabus-toolbar">
                   <div class="syllabus-search">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="pyFormulaSearchInput" placeholder="Search programs…" value="${escapeHtml(pyFormulaState.query)}" aria-label="Search Python programs" />
+                  </div>
+                  <div class="filter-chip-group">
+                    <button class="filter-chip ${!pyFormulaState.checklistMode ? 'active' : ''}" id="pyNormalModeBtn">📖 Study mode</button>
+                    <button class="filter-chip ${pyFormulaState.checklistMode ? 'active' : ''}" id="pyChecklistModeBtn">📋 Revision checklist</button>
                   </div>
                   <div class="expand-controls">
                     <button id="pyExpandAllBtn">⊕ Expand all</button>
                     <button id="pyCollapseAllBtn">⊖ Collapse all</button>
                   </div>
                 </div>
+                ${pyFormulaState.checklistMode ? `<p style="font-size:0.78rem;color:#7a8da8;margin-top:0.6rem;">💡 Revision mode hides the code — try to recall each program's key idea from memory before checking it off. This is how you make it stick permanently.</p>` : ''}
               </div>
             `;
 
@@ -1279,30 +1787,64 @@ const views = {
             if (filteredPrograms.length === 0) return;
             anyVisible = true;
 
+            const catMastered = cat.programs.filter(p => p.mastered).length;
             const isOpen = pyFormulaState.expandedCategories.has(ci);
+
+            // ─── Checklist (revision) mode: compact, code-free, recall-first ───
+            if (pyFormulaState.checklistMode) {
+                html += `
+                <div class="card syllabus-level">
+                  <div class="level-title" data-pycat="${ci}">
+                    <span>${cat.icon}</span>
+                    <span class="level-name">${cat.category}</span>
+                    <span class="count">${catMastered}/${cat.programs.length}</span>
+                    <span class="arrow ${isOpen ? 'open' : ''}" style="margin-left:auto;">▶</span>
+                  </div>
+                  <div class="topic-list ${isOpen ? 'open' : ''}" data-pycat="${ci}">
+                    ${filteredPrograms.map(p => `
+                      <div class="topic-item">
+                        <div class="check ${p.mastered ? 'done' : ''}" data-pycat="${ci}" data-pyprog="${p.pi}" role="checkbox" aria-checked="${!!p.mastered}" tabindex="0">✓</div>
+                        <span class="topic-label">${p.name}</span>
+                        <span class="topic-difficulty ${getDifficultyClass(p.difficulty)}">${p.difficulty}</span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>`;
+                return;
+            }
+
+            // ─── Study mode: full cards with key idea + expandable code/explanation ───
             html += `
                 <div class="card syllabus-level">
                   <div class="level-title" data-pycat="${ci}">
                     <span>${cat.icon}</span>
                     <span class="level-name">${cat.category}</span>
-                    <span class="count">${cat.programs.length} programs</span>
+                    <span class="count">${catMastered}/${cat.programs.length} mastered</span>
                     <span class="arrow ${isOpen ? 'open' : ''}" style="margin-left:auto;">▶</span>
                   </div>
                   <div class="topic-list ${isOpen ? 'open' : ''}" data-pycat="${ci}">
                     ${filteredPrograms.map(p => {
             const codeKey = `${ci}-${p.pi}`;
             const codeOpen = pyFormulaState.openCode.has(codeKey);
+            const extras = ['explanation', 'realWorld', 'mistake', 'practice'].some(f => p[f]);
             return `
                       <div class="formula-card">
                         <div class="formula-header" data-pycat="${ci}" data-pyprog="${p.pi}">
+                          <div class="check ${p.mastered ? 'done' : ''}" data-pycat="${ci}" data-pyprog="${p.pi}" data-mastered-toggle="1" role="checkbox" aria-checked="${!!p.mastered}" tabindex="0">✓</div>
                           <span class="topic-difficulty ${getDifficultyClass(p.difficulty)}">${p.difficulty}</span>
                           <span class="formula-name">${p.name}</span>
-                          <button class="formula-toggle-btn" data-pycat="${ci}" data-pyprog="${p.pi}">${codeOpen ? '▲ Hide code' : '▼ Show code'}</button>
+                          <button class="formula-toggle-btn" data-pycat="${ci}" data-pyprog="${p.pi}">${codeOpen ? '▲ Hide details' : '▼ Show details'}</button>
                         </div>
                         <div class="formula-key">🔑 ${p.key}</div>
                         <div class="formula-code-wrap ${codeOpen ? 'open' : ''}">
                           <div class="code-block">${highlightCode(p.code)}</div>
                           <div class="lab-output" style="margin-top:0.5rem;"><span style="color:#6b8aa8;">Output:</span><br>${escapeHtml(p.output).split('\n').join('<br>')}</div>
+                          ${extras ? `<div class="formula-extras">
+                            ${p.explanation ? `<div class="formula-extra-row"><span class="formula-extra-tag">📖 Explanation</span><p>${escapeHtml(p.explanation)}</p></div>` : ''}
+                            ${p.realWorld ? `<div class="formula-extra-row"><span class="formula-extra-tag real">🌍 Real-world use</span><p>${escapeHtml(p.realWorld)}</p></div>` : ''}
+                            ${p.mistake ? `<div class="formula-extra-row"><span class="formula-extra-tag warn">⚠️ Beginner mistake</span><p>${escapeHtml(p.mistake)}</p></div>` : ''}
+                            ${p.practice ? `<div class="formula-extra-row"><span class="formula-extra-tag practice">🏋️ Practice exercise</span><p>${escapeHtml(p.practice)}</p></div>` : ''}
+                          </div>` : ''}
                         </div>
                       </div>
                     `;
@@ -2037,6 +2579,21 @@ function initPyFormulas() {
         });
     }
 
+    const normalModeBtn = document.getElementById('pyNormalModeBtn');
+    const checklistModeBtn = document.getElementById('pyChecklistModeBtn');
+    if (normalModeBtn) {
+        normalModeBtn.addEventListener('click', () => {
+            pyFormulaState.checklistMode = false;
+            renderView('pyformulas');
+        });
+    }
+    if (checklistModeBtn) {
+        checklistModeBtn.addEventListener('click', () => {
+            pyFormulaState.checklistMode = true;
+            renderView('pyformulas');
+        });
+    }
+
     document.querySelectorAll('.level-title[data-pycat]').forEach(el => {
         el.addEventListener('click', () => {
             const ci = parseInt(el.dataset.pycat);
@@ -2053,6 +2610,26 @@ function initPyFormulas() {
         renderView('pyformulas');
     };
 
+    const toggleMastered = (ci, pi) => {
+        const program = PY_FORMULAS_DATA[ci]?.programs[pi];
+        if (program) {
+            program.mastered = !program.mastered;
+            renderView('pyformulas');
+        }
+    };
+
+    // mastered checkboxes (both in study-mode cards and checklist-mode rows)
+    document.querySelectorAll('.check[data-pycat]').forEach(el => {
+        const handler = (e) => {
+            e.stopPropagation();
+            toggleMastered(parseInt(el.dataset.pycat), parseInt(el.dataset.pyprog));
+        };
+        el.addEventListener('click', handler);
+        el.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(e); }
+        });
+    });
+
     document.querySelectorAll('.formula-toggle-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -2061,7 +2638,8 @@ function initPyFormulas() {
     });
 
     document.querySelectorAll('.formula-header').forEach(el => {
-        el.addEventListener('click', () => {
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('.check')) return; // mastered-checkbox click already handled above
             toggleCode(parseInt(el.dataset.pycat), parseInt(el.dataset.pyprog));
         });
     });
